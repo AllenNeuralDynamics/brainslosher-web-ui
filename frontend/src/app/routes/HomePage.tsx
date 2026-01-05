@@ -1,3 +1,5 @@
+import { ProtocolForm } from "../../features/protocol/components/protocolForm.tsx"
+
 
 export const HomePage = () => {
   return (
@@ -8,7 +10,7 @@ export const HomePage = () => {
         flexDirection: "column",
       }}
     >
-      Hiii
+      <ProtocolForm/>
     </div>
   );
 };
