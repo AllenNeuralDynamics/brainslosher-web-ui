@@ -1,5 +1,6 @@
+import { Group } from "@mantine/core"
 import { ProtocolForm } from "../../features/protocol/components/protocolForm.tsx"
-
+import { InstrumentControl } from "@/features/instrumentControl/index.ts";
 
 export const HomePage = () => {
   return (
@@ -10,7 +11,10 @@ export const HomePage = () => {
         flexDirection: "column",
       }}
     >
+      <Group>
       <ProtocolForm/>
+      <InstrumentControl/>
+      </Group>
     </div>
   );
 };
