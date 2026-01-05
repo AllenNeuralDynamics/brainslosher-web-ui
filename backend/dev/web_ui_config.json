@@ -1,6 +1,10 @@
 {
   "data_channels": [],
-  "gets": {},
-
-  "posts": {}
+    "gets": {
+      "/instrument_config":"get_config"},
+    
+  "posts": {
+    "/set_fill_volume":"set_fill_volume",
+    "/set_drain_volume":"set_drain_buffer_volume"
+  }
 }

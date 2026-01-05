@@ -17,6 +17,7 @@ from pathlib import Path
 logger = logging.getLogger(__name__)
 
 router_client = RouterClient()  # instantiate router client 
+print(router_client)
 stop_event = asyncio.Event()    # event to discontinue polling
 tasks: list[asyncio.Task] = []  # async tasks running during app lifetime
 
@@ -105,7 +106,6 @@ app.add_middleware(
 # set up endpoints based on config mapping routes to router_client calls
 # TODO: Grab config from somewhere else
 confg = json.loads(Path("./dev/web_ui_config.json").read_text())
-
 for path, call_name in confg["posts"].items():
     async def endpoint(element_id: str = None, kwargs: dict = None, call_name=call_name):
         call_name = call_name.format(element_id=element_id)
