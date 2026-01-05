@@ -10,9 +10,15 @@ import { WashVolumes } from "./washVolumes";
 export const getEmptyJob = (): BrainSlosherJobType => ({
   name: "",
   starting_solution: {},
-  protocol: [],
-  motor_speed_rpm: 0
-  });
+  protocol: [
+    {
+      solution: "",
+      duration_min: 0,
+      washes: 0,
+    }
+  ],
+  motor_speed_rpm: 0,
+});
 
 export const ProtocolForm = () => {
   const [protocolForm, setProtocol] = useState<BrainSlosherJobType>(getEmptyJob())
@@ -52,7 +58,7 @@ export const ProtocolForm = () => {
                maxWidth: 600
        }}
     >
-      <div style={{ display: 'flex', justifyContent: 'center' }}>
+      <div className="protocol-form" style={{ display: 'flex', justifyContent: 'center' }}>
       <div style={{ width: '100%', maxWidth: 520}}>
         <Title style={{ fontWeight: "bold", marginBottom: "0.5rem", textAlign: "center"}}> Protocol </Title>
         <Form

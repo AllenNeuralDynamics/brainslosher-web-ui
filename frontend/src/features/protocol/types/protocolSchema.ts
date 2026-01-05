@@ -38,7 +38,7 @@ const valveKeys = instConfig ? Object.keys(instConfig.selector_port_map) : [];
     },
     "protocol": {
       "type": "array",
-      "title": "Cycles",
+      "title": "Cycle",
       "items": {
         "type": "object",
         "properties": {
@@ -130,6 +130,9 @@ const valveLabels = instConfig
         "ui:widget": "hidden"
       },
       "protocol": {
+        "ui:options": {
+          "label": false
+        },
         "items": {
           "solution": {
             "ui:widget": "select",
