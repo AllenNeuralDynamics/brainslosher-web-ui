@@ -4,7 +4,7 @@ import { useInstrumentConfigStore } from "@/stores/instrumentConfigStore.ts";
 export const useProtocolSchema = () : RJSFSchema=> {
   const instConfig = useInstrumentConfigStore((state) => state.config);
 
-const valveKeys = instConfig ? Object.keys(instConfig.selector_port_map) : [];
+  const valveKeys = instConfig ? Object.keys(instConfig.selector_port_map) : [];
 
     return  {
       

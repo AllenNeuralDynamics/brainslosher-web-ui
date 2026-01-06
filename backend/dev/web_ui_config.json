@@ -5,6 +5,11 @@
     
   "posts": {
     "/set_fill_volume":"set_fill_volume",
-    "/set_drain_volume":"set_drain_buffer_volume"
+    "/set_drain_volume":"set_drain_buffer_volume", 
+    "/fill_chamber":"fill_chamber",
+    "/drain_chamber":"drain_chamber",
+    "/start_run":"run",
+    "/pause_run":"pause",
+    "/stop_run":"stop"
   }
 }

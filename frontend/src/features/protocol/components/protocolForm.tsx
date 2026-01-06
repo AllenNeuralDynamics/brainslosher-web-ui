@@ -1,11 +1,12 @@
 import { useState } from "react";
 import validator from "@rjsf/validator-ajv8";
 import Form from "@rjsf/mantine";
-import { Button, FileButton, Title, Card, Group } from "@mantine/core";
+import { Button, FileButton, Title, Card, Group, TextInput } from "@mantine/core";
 import { useProtocolSchema, useProtocolUiSchema } from "../types/protocolSchema"
 import type { BrainSlosherJobType } from "../types/protocolType"
 import "../assets/rjsf-spacing.css";
 import { WashVolumes } from "./washVolumes";
+import { usejobPathStore } from "../../../stores/jobPathStore"
 
 export const getEmptyJob = (): BrainSlosherJobType => ({
   name: "",
@@ -22,7 +23,8 @@ export const getEmptyJob = (): BrainSlosherJobType => ({
 
 export const ProtocolForm = () => {
   const [protocolForm, setProtocol] = useState<BrainSlosherJobType>(getEmptyJob())
-  
+  const jobPath = usejobPathStore((state) => state.jobPath);  
+  const setJobPath = usejobPathStore((state) => state.setJobPath);
 
   const loadConfig = (file: File | null) => {
     if (file) {
@@ -69,6 +71,20 @@ export const ProtocolForm = () => {
           onChange={(e) => setProtocol(e.formData)}
         >
           <WashVolumes />
+          <TextInput 
+            m="xs" 
+            type="button"
+            label="Job Path"
+            description="Path where job will be saved to."
+            required
+            value={jobPath}
+            onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                        const val = e.currentTarget.value;
+                        setJobPath(val);
+                    }
+            }}
+            />
           <Group style={{ justifyContent: "center" }}>
           <Button m="xs" type="submit">
             Submit

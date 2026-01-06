@@ -63,7 +63,6 @@ export const AppProvider = ({ children }: AppProviderProps) => {
     async function fetchInstrumentConfig() {
       try {
         const instConfig = await api.get("/instrument_config");
-        console.log("Got the inst config!")
         setInstConfig({ ...instConfig.data });
       } catch (error) {
         console.error("Error fetching config:", error);

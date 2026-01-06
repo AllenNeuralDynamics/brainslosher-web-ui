@@ -7,12 +7,12 @@
 }
 
 /* Even cycles (2,4,6...) */
-.protocol-form .rjsf-array-item:nth-child(even) {
+.protocol-form .rjsf-array-item:nth-child(odd) {
   background-color: #e0f2ff; /* light blue */
 }
 
 /* Optional: odd cycles slightly off-white for contrast */
-.protocol-form .rjsf-array-item:nth-child(odd) {
+.protocol-form .rjsf-array-item:nth-child(even) {
   background-color: #ffffff;
 }
 
