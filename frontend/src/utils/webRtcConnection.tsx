@@ -4,9 +4,7 @@
  * @param pc - peer connection to use
  */
 
-export async function negotiate(
-  pc: RTCPeerConnection,
-) {
+export async function negotiate(pc: RTCPeerConnection) {
   // create offer
   const offer = await pc.createOffer();
   // set offer as local description

@@ -20,12 +20,12 @@ export const AppProvider = ({ children }: AppProviderProps) => {
   const setUiConfig = useAppConfigStore((state) => state.setConfig);
   const uiConfig = useAppConfigStore((state) => state.config);
   const setInstConfig = useInstrumentConfigStore((state) => state.setConfig);
-  
+
   const [queryClient] = useState(
     () =>
       new QueryClient({
         defaultOptions: queryConfig,
-      })
+      }),
   );
 
   //  fetch ui config
@@ -58,7 +58,7 @@ export const AppProvider = ({ children }: AppProviderProps) => {
     };
   }, [uiConfig, addChannel]);
 
-//  grab instrument config
+  //  grab instrument config
   useEffect(() => {
     async function fetchInstrumentConfig() {
       try {

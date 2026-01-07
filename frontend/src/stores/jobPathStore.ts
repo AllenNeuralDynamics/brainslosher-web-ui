@@ -1,11 +1,11 @@
 import { create } from "zustand";
 
 interface JobPathStore {
-  jobPath: string;
+  jobPath: string | null;
   setJobPath: (path: string) => void;
 }
 
-export const usejobPathStore = create<JobPathStore>((set) => ({
-  jobPath: "./brainslosher_job.json",
+export const useJobPathStore = create<JobPathStore>((set) => ({
+  jobPath: null,
   setJobPath: (path) => set({ jobPath: path }),
 }));
