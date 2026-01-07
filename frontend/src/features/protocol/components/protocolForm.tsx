@@ -70,8 +70,7 @@ export const ProtocolForm = () => {
               textAlign: "center",
             }}
           >
-            {" "}
-            Protocol{" "}
+            Protocol
           </Title>
           <Form
             uiSchema={useProtocolUiSchema()}

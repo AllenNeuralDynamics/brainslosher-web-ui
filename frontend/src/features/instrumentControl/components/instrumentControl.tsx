@@ -6,7 +6,6 @@ import { useProtocolStore } from "@/stores/protocolStore.ts";
 import { useAppConfigStore } from "@/stores/appConfigStore.ts";
 import { useDataChannelStore } from "@/stores/dataChannelStore.ts";
 
-
 export const InstrumentControl = () => {
   const [washFill, setWashFill] = useState<number>(11);
   const [solution, setSolution] = useState<string>("");
@@ -17,8 +16,6 @@ export const InstrumentControl = () => {
   const dataChannels = useDataChannelStore((state) => state.channels);
   const [state, setState] = useState("Paused");
   const stateChannelRef = useRef<RTCDataChannel | null>(null);
-
-
 
   // initialize and connect instrument state dataChannel
   useEffect(() => {
