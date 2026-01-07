@@ -51,11 +51,15 @@ export const useProtocolSchema = (): RJSFSchema => {
               type: "number",
               title: "Duration (min)",
               description: "Duration in minutes of all washes in cycle.",
+              default: 1,
+              minimum: 1,
             },
             washes: {
               type: "number",
               title: "Number of washes",
               description: "Number of washes performed in cycle.",
+              default: 1,
+              minimum: 1,
             },
           },
           required: ["solution", "duration_min", "washes"],
@@ -65,6 +69,7 @@ export const useProtocolSchema = (): RJSFSchema => {
         type: "number",
         title: "Motor Speed (RPM)",
         description: "Speed of motor in rpms. Set to 0 to disable motor.",
+        default: 0,
       },
       resume_state: {
         type: "object",

@@ -7,8 +7,8 @@ const getEmptyJob = (): BrainSlosherJobType => ({
   protocol: [
     {
       solution: "air",
-      duration_min: 0,
-      washes: 0,
+      duration_min: 1,
+      washes: 1,
     },
   ],
   motor_speed_rpm: 0,

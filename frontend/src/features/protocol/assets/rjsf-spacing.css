@@ -1,9 +1,17 @@
+.protocol-form .rjsf-array-item {
+  padding: 1rem;
+  border-radius: 8px;
+  margin-bottom: 0.75rem;
+  background-color: white;
+}
+
 /* Even cycles (2,4,6...) */
 .protocol-form .rjsf-array-item:nth-child(odd) {
-  background-color: light-dark(2, #1e3a5f); /* light blue */
+  background-color: light-dark(#e0f2ff, #1e3a5f); /* light blue */
 }
 
 /* Optional: odd cycles slightly off-white for contrast */
 .protocol-form .rjsf-array-item:nth-child(even) {
   background-color: light-dark(#ffffff, #2c2c2c);
 }
+

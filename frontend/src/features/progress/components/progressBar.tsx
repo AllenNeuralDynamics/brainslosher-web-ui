@@ -1,6 +1,7 @@
 import { Progress, Slider, Text, Group, Box, Title, Card } from "@mantine/core";
 import { useState, useEffect } from "react";
 import { useProtocolStore } from "../../../stores/protocolStore";
+import { useThemeStore } from "../../../stores/themeStore";
 import type { Protocol } from "../../protocol/types/protocolType";
 
 type Marker = {
@@ -12,18 +13,21 @@ type Marker = {
 type CycleCard = {
   startPercent: number;
   endPercent: number;
-  color: string;
 };
 
 export const ProtocolProgress = () => {
   const protocol = useProtocolStore((state) => state.protocol);
+  const theme = useThemeStore((state)=> state.colorScheme)
   const [progress, setProgress] = useState<number>(0);
   const [markers, setMarkers] = useState<Marker[]>([]);
+  const themeColors = {
+    "light": ["#e0f2ff", "#f3f8fbff"],
+    "dark": ["#1e3a5f", "#2c2c2c"]
+    }
   const [cycleCards, setCycleCards] = useState<CycleCard[]>([
     {
       startPercent: 0,
       endPercent: 100,
-      color: "#e0f2ff",
     },
   ]);
 
@@ -71,7 +75,6 @@ export const ProtocolProgress = () => {
       cards.push({
         startPercent: 100 - cycleEnd, // invert for vertical bar
         endPercent: 100 - cycleStart,
-        color: cycleIdx % 2 === 0 ? "#e0f2ff" : "#cce4fb", // alternating light colors
       });
 
       elapsedTime += cycle.washes * cycle.duration_min;
@@ -126,7 +129,7 @@ export const ProtocolProgress = () => {
               bottom: `${c.startPercent + 1 / 2}%`,
               height: `${c.endPercent - c.startPercent - 1}%`,
               width: 400,
-              backgroundColor: c.color,
+              backgroundColor: themeColors[theme][idx % 2],
               borderRadius: 8,
               padding: 10,
               zIndex: 0,
@@ -136,13 +139,13 @@ export const ProtocolProgress = () => {
               size="xl"
               style={{
                 position: "absolute",
-                bottom: `${c.startPercent/2}%`,
+                bottom: `${c.startPercent + (c.endPercent - c.startPercent) / 2}%`,
                 left: 300,
                 transform: "translateY(-50%)",
                 whiteSpace: "nowrap",
               }}
-            >
-              cycle
+            > 
+                Cycle {idx + 1}
             </Text>
             </Box>
         ))}
@@ -159,7 +162,7 @@ export const ProtocolProgress = () => {
             style={{
               position: "absolute",
               bottom: `calc(${m.percent}% - 20px)`,
-              left: "50%",
+              left: "30%",
               transform: "translateX(-50%)",
               display: "flex",
               alignItems: "center",
@@ -179,7 +182,7 @@ export const ProtocolProgress = () => {
               size="xl"
               style={{
                 position: "absolute",
-                left: 16, // offset text to the right of the circle
+                left: 20, // offset text to the right of the circle
                 top: "50%",
                 transform: "translateY(-50%)",
                 whiteSpace: "nowrap",
