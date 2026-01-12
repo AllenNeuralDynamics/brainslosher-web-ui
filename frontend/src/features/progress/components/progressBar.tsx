@@ -1,8 +1,10 @@
-import { Progress, Slider, Text, Group, Box, Title, Card } from "@mantine/core";
+import { useRef } from "react"
+import { Progress, Text, Box, Title, Card } from "@mantine/core";
 import { useState, useEffect } from "react";
 import { useProtocolStore } from "../../../stores/protocolStore";
 import { useThemeStore } from "../../../stores/themeStore";
 import type { Protocol } from "../../protocol/types/protocolType";
+import { useDataChannelStore } from "@/stores/dataChannelStore.ts";
 
 type Marker = {
   percent: number;
@@ -19,6 +21,8 @@ export const ProtocolProgress = () => {
   const protocol = useProtocolStore((state) => state.protocol);
   const theme = useThemeStore((state)=> state.colorScheme)
   const [progress, setProgress] = useState<number>(0);
+  const progressChannelRef = useRef<RTCDataChannel | null>(null);
+  const dataChannels = useDataChannelStore((state) => state.channels);
   const [markers, setMarkers] = useState<Marker[]>([]);
   const themeColors = {
     "light": ["#e0f2ff", "#f3f8fbff"],
@@ -30,6 +34,25 @@ export const ProtocolProgress = () => {
       endPercent: 100,
     },
   ]);
+
+  // initialize and connect instrument progress dataChannel
+  useEffect(() => {
+    // add progress channel
+    const progressChannel = dataChannels[`progress`];
+    if (!progressChannel) return;
+
+    const handleProgressMessage = (evt: MessageEvent) => {
+      const progress = JSON.parse(evt.data);
+      setProgress(progress);
+    };
+    progressChannel.addEventListener("message", handleProgressMessage);
+    // create reference
+    progressChannelRef.current = progressChannel;
+
+    return () => {
+      progressChannel.removeEventListener("message", handleProgressMessage);
+    };
+  }, [dataChannels]);
 
   function buildMarkers(protocol: Protocol): Marker[] {
     const totalDuration = protocol.reduce(
@@ -66,7 +89,7 @@ export const ProtocolProgress = () => {
     let elapsedTime = 0;
     const cards: CycleCard[] = [];
 
-    protocol.forEach((cycle, cycleIdx) => {
+    protocol.forEach((cycle) => {
       const cycleStart = (elapsedTime / totalDuration) * 100;
       const cycleDuration =
         ((cycle.washes * cycle.duration_min) / totalDuration) * 100;

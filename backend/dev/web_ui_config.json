@@ -1,6 +1,6 @@
 {
   "job_folder": "../../brain_slosher_jobs/",
-  "data_channels": ["state"],
+  "data_channels": ["state", "progress"],
     "gets": {
       "/instrument_config":"get_config"
     },

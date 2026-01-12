@@ -14,7 +14,7 @@ export const InstrumentControl = () => {
   const setProtocol = useProtocolStore((state) => state.setProtocol);
   const uiConfing = useAppConfigStore((state) => state.config);
   const dataChannels = useDataChannelStore((state) => state.channels);
-  const [state, setState] = useState("Paused");
+  const [state, setState] = useState();
   const stateChannelRef = useRef<RTCDataChannel | null>(null);
 
   // initialize and connect instrument state dataChannel
@@ -22,7 +22,7 @@ export const InstrumentControl = () => {
     // add state channel
     const stateChannel = dataChannels[`state`];
     if (!stateChannel) return;
-    // update pos upon message
+
     const handleStateMessage = (evt: MessageEvent) => {
       const state = JSON.parse(evt.data);
       setState(state);

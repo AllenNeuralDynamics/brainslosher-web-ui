@@ -15,6 +15,7 @@ from fractions import Fraction
 from pathlib import Path
 
 logger = logging.getLogger(__name__)
+logging.basicConfig(level=logging.DEBUG)
 
 router_client = RouterClient()  # instantiate router client 
 print(router_client)
