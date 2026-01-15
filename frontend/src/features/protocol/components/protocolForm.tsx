@@ -9,6 +9,7 @@ import type { BrainSlosherJobType } from "../types/protocolType";
 import "../assets/rjsf-spacing.css";
 import { WashVolumes } from "./washVolumes";
 import { useProtocolStore } from "../../../stores/protocolStore";
+import { useInstrumentStateStore } from "@/stores/instrumentStateStore.ts";
 
 export const getEmptyJob = (): BrainSlosherJobType => ({
   name: "",
@@ -26,7 +27,8 @@ export const getEmptyJob = (): BrainSlosherJobType => ({
 export const ProtocolForm = () => {
   const protocol = useProtocolStore((state) => state.protocol);
   const setProtocol = useProtocolStore((state) => state.setProtocol);
-
+  const state = useInstrumentStateStore((state) => state.state)
+  
   const loadConfig = (file: File | null) => {
     if (file) {
       const reader = new FileReader();
@@ -78,12 +80,13 @@ export const ProtocolForm = () => {
             validator={validator}
             formData={protocol}
             onChange={(e) => setProtocol(e.formData)}
+            disabled={ state != "idle"}
           >
-            <WashVolumes />
+            <WashVolumes/>
             <Group style={{ justifyContent: "center" }}>
-              <Button m="xs" type="submit">
+              {/* <Button m="xs" type="submit">
                 Submit
-              </Button>
+              </Button> */}
               <FileButton onChange={loadConfig} accept="json">
                 {(props) => <Button {...props}>Load Protocol</Button>}
               </FileButton>

@@ -52,7 +52,7 @@ export const ProtocolProgress = () => {
     return () => {
       progressChannel.removeEventListener("message", handleProgressMessage);
     };
-  }, [dataChannels]);
+  }, [dataChannels["progress"]]);
 
   function buildMarkers(protocol: Protocol): Marker[] {
     const totalDuration = protocol.reduce(
@@ -70,7 +70,7 @@ export const ProtocolProgress = () => {
         markers.push({
           percent: 100 - percent, // invert for vertical bar
           label: `Wash ${wash}`,
-          color: cycleIdx % 2 === 0 ? "blue" : "#6ab5ebff",
+          color: cycleIdx % 2 === 0 ? "lightblue" : "#8798a5ff",
         });
 
         elapsedTime += cycle.duration_min;
@@ -174,10 +174,14 @@ export const ProtocolProgress = () => {
         ))}
         <Progress
           size="xl"
-          value={progress}
+          value={100-progress}
           orientation="vertical"
           radius="lg"
           style={{ width: 20 }}
+          color="lightgray"
+          styles={{
+          root: { backgroundColor: "blue" }, 
+        }}
         />
         {markers.map((m, idx) => (
           <Box
@@ -198,7 +202,7 @@ export const ProtocolProgress = () => {
                 height: 12,
                 borderRadius: "50%",
                 backgroundColor: m.color,
-                marginLeft: 0,
+                marginLeft: -4,
               }}
             />
             <Text

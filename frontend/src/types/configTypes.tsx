@@ -1,5 +1,4 @@
 export interface AppConfig {
-  job_folder: string[];
   data_channels: string[];
   gets: Record<string, string>;
   posts: Record<string, string>;
