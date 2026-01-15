@@ -21,7 +21,7 @@ api.interceptors.response.use(
       url: error.config?.url,
     };
 
-    window.dispatchEvent(new CustomEvent("api-error", { detail: errorData }));
+    window.dispatchEvent(new CustomEvent("error", { detail: errorData }));
 
     return Promise.reject(error);
   }

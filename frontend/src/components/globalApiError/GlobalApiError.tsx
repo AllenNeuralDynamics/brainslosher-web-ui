@@ -10,8 +10,8 @@ export const GlobalApiError = ({ children }: GlobalApiErrorProps) => {
 
   useEffect(() => {
     const handler = (e: any) => setError(e.detail);
-    window.addEventListener("api-error", handler);
-    return () => window.removeEventListener("api-error", handler);
+    window.addEventListener("error", handler);
+    return () => window.removeEventListener("error", handler);
   }, []);
 
   return (
@@ -46,7 +46,7 @@ export const GlobalApiError = ({ children }: GlobalApiErrorProps) => {
             onClick={(e) => e.stopPropagation()} // prevent closing when clicking modal content
           >
             <h2 style={{ marginBottom: "1rem" }}>
-              API Error {error.status ? `(${error.status})` : ""}
+              Error {error.status ? `(${error.status})` : ""}
             </h2>
             <p style={{ marginBottom: "1rem" }}>{error.message}</p>
             <button

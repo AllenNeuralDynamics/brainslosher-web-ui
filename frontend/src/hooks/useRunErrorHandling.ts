@@ -14,7 +14,8 @@ export function UseRunErrorHandling() {
     
     const handleErrorMessage = (evt: MessageEvent) => {
       const error = JSON.parse(evt.data);
-      window.dispatchEvent(new CustomEvent("Error During Run", { detail: {message: error} }));
+      if (!error) return;
+      window.dispatchEvent(new CustomEvent("error", { detail: {message: error} }));
     };
     errorChannel.addEventListener("message", handleErrorMessage);
     

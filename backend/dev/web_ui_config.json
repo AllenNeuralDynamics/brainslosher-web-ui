@@ -14,6 +14,7 @@
     "/pause_run":"pause",
     "/resume_run":"resume",
     "/stop_run":"stop",
-    "/clear_run":"clear"
+    "/clear_run":"clear",
+    "/save_job":"save_job"
   }
 }

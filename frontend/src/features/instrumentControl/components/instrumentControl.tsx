@@ -32,7 +32,7 @@ export const InstrumentControl = () => {
       <Group>
         <Button
           mt="md"
-          disabled={ state != "idle"}
+          disabled={ state != "idle" && state != "paused"}
           leftSection={<IconArrowNarrowUpDashed/>}
           color="blue"
           onClick={() => instrumentControlApi.postFill(solution, washFill)}

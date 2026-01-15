@@ -10,6 +10,7 @@ import "../assets/rjsf-spacing.css";
 import { WashVolumes } from "./washVolumes";
 import { useProtocolStore } from "../../../stores/protocolStore";
 import { useInstrumentStateStore } from "@/stores/instrumentStateStore.ts";
+import { formApi } from "../api/formApi"; 
 
 export const getEmptyJob = (): BrainSlosherJobType => ({
   name: "",
@@ -58,7 +59,13 @@ export const ProtocolForm = () => {
       radius="md"
       withBorder
       className="bg-gray-50"
-      style={{ borderColor: "#333", margin: "0.7rem", maxWidth: 600 }}
+      style={{ 
+        borderColor: "#333",
+        margin: "0.7rem", 
+        maxWidth: 600,
+        pointerEvents: state != "idle" ? "none" : "auto", // disable if state is not idle
+        opacity: state !== "idle" ? 0.5 : 1,
+       }}
     >
       <div
         className="protocol-form"
@@ -84,9 +91,13 @@ export const ProtocolForm = () => {
           >
             <WashVolumes/>
             <Group style={{ justifyContent: "center" }}>
-              {/* <Button m="xs" type="submit">
-                Submit
-              </Button> */}
+              <Button 
+                m="xs" 
+                onClick={() => {
+                  formApi.postSaveForm(protocol)
+              }}>
+                Save
+              </Button>
               <FileButton onChange={loadConfig} accept="json">
                 {(props) => <Button {...props}>Load Protocol</Button>}
               </FileButton>
