@@ -59,7 +59,7 @@ export const AppProvider = ({ children }: AppProviderProps) => {
     };
   }, [uiConfig, addChannel]);
 
-  UseRunErrorHandling()
+  UseRunErrorHandling();
 
   //  grab instrument config
   useEffect(() => {

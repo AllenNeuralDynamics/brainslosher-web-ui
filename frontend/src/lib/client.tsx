@@ -8,14 +8,13 @@ export const api = axios.create({
 });
 
 api.interceptors.response.use(
-  response => response,
-  error => {
-    
+  (response) => response,
+  (error) => {
     const errorData = {
       message:
-        error.response?.data?.detail || 
-        error.response?.data?.message || 
-        error.message ||                  
+        error.response?.data?.detail ||
+        error.response?.data?.message ||
+        error.message ||
         "Unknown error",
       status: error.response?.status,
       url: error.config?.url,
@@ -24,5 +23,5 @@ api.interceptors.response.use(
     window.dispatchEvent(new CustomEvent("error", { detail: errorData }));
 
     return Promise.reject(error);
-  }
+  },
 );
