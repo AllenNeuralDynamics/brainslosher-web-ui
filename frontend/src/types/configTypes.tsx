@@ -11,4 +11,5 @@ export interface InstrumentConfig {
   purge_volume_ml: number;
   drain_volume_buffer_ml: number;
   fill_volume_ml: number;
+  user_email: string | null;
 }
