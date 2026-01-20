@@ -2,14 +2,14 @@ import { useEffect, useRef } from "react";
 import { useDataChannelStore } from "@/stores/dataChannelStore";
 
 // need to handle error raised in run thread differently since errors do not occur during http call.
-// error_check dataChannel will return any errors that need to be raised
+// check_worker_status dataChannel will return any errors that need to be raised
 export function UseRunErrorHandling() {
   const dataChannels = useDataChannelStore((state) => state.channels);
   const errorChannelRef = useRef<RTCDataChannel | null>(null);
 
   // set up error data channel
   useEffect(() => {
-    const errorChannel = dataChannels[`error_check`];
+    const errorChannel = dataChannels[`check_worker_status`];
     if (!errorChannel) return;
 
     const handleErrorMessage = (evt: MessageEvent) => {
@@ -27,5 +27,5 @@ export function UseRunErrorHandling() {
     return () => {
       errorChannel.removeEventListener("message", handleErrorMessage);
     };
-  }, [dataChannels[`error_check`]]);
+  }, [dataChannels[`check_worker_status`]]);
 }
