@@ -1,5 +1,5 @@
 import { useRef } from "react";
-import { Progress, Text, Box, Title, Card } from "@mantine/core";
+import { Progress, Text, Box, Title, Card, Group, Stack } from "@mantine/core";
 import { useState, useEffect } from "react";
 import { useProtocolStore } from "../../../stores/protocolStore";
 import { useThemeStore } from "../../../stores/themeStore";
@@ -34,6 +34,8 @@ export const ProtocolProgress = () => {
       endPercent: 100,
     },
   ]);
+  const [duration, setDuration] = useState<number | null>();
+  const [remaining, setRemaining] = useState<number | null>();
 
   // initialize and connect instrument progress dataChannel
   useEffect(() => {
@@ -53,6 +55,27 @@ export const ProtocolProgress = () => {
       progressChannel.removeEventListener("message", handleProgressMessage);
     };
   }, [dataChannels["progress"]]);
+
+  // Calculate total duration and remaining time
+useEffect(() => {
+  if (!protocol?.protocol || protocol.protocol.length === 0) {
+    setDuration(null);
+    setRemaining(null);
+    return;
+  }
+
+  // Total duration in minutes
+  const totalDuration = protocol.protocol.reduce(
+    (sum, cycle) => sum + cycle.washes * cycle.duration_min,
+    0
+  );
+
+  setDuration(totalDuration);
+
+  // Remaining = totalDuration * (1 - progress/100)
+  const remainingTime = totalDuration * (1 - progress / 100);
+  setRemaining(Math.round(remainingTime));
+}, [protocol, progress]);
 
   function buildMarkers(protocol: Protocol): Marker[] {
     const totalDuration = protocol.reduce(
@@ -125,16 +148,21 @@ export const ProtocolProgress = () => {
         height: "100%",
       }}
     >
-      <Title
-        style={{
-          fontWeight: "bold",
-          marginBottom: "1.5rem",
-          textAlign: "center",
-        }}
-      >
-        Progress
-      </Title>
-
+      <Group>
+        <Title
+          style={{
+            fontWeight: "bold",
+            marginBottom: "1.5rem",
+            textAlign: "center",
+          }}
+        >
+          Progress
+        </Title>
+        <Stack ml="xl">
+        <Text>Duration: {duration} min</Text>
+        <Text>Remaining: {remaining} min</Text>
+        </Stack>
+      </Group>
       <Box
         style={{
           position: "relative",
