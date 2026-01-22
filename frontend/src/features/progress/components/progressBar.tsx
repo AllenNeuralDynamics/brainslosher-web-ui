@@ -43,7 +43,8 @@ export const ProtocolProgress = () => {
 
     const handleProgressMessage = (evt: MessageEvent) => {
       const progress = JSON.parse(evt.data);
-      setProgress(progress);
+      if (progress){
+      setProgress(progress);}
     };
     progressChannel.addEventListener("message", handleProgressMessage);
     // create reference
