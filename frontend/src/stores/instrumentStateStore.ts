@@ -1,11 +1,22 @@
 import { create } from "zustand";
 import { useDataChannelStore } from "./dataChannelStore";
 
-export type InstrumentState = "running" | "idle" | "paused" | null;
+type InstrumentStateStatus =
+  | "failed"
+  | "finished"
+  | "running"
+  | "paused"
+  | "idle"
+  | null;
+
+export type InstrumentState = {
+  status: InstrumentStateStatus;
+  message: string;
+};
 
 interface InstrumentStateState {
-  state: InstrumentState;
-  setState: (state: InstrumentState) => void;
+  state: InstrumentStateStatus;
+  setState: (state: InstrumentStateStatus) => void;
 }
 
 export const useInstrumentStateStore = create<InstrumentStateState>((set) => {
@@ -19,11 +30,22 @@ export const useInstrumentStateStore = create<InstrumentStateState>((set) => {
 
     currentListener = (evt: MessageEvent) => {
       try {
-        const parsed = JSON.parse(evt.data);
-        if (parsed === "running" || parsed === "idle" || parsed === "paused") {
-          set({ state: parsed });
+        const message: InstrumentState = JSON.parse(evt.data);
+        const status = message.status;
+        if (
+          status === "running" ||
+          status === "idle" ||
+          status === "paused" ||
+          status === "finished"
+        ) {
+          set({ state: status });
+        } else if (status === "failed") {
+          set({ state: status });
+          window.dispatchEvent(
+            new CustomEvent("error", { detail: { message: message.message } }),
+          );
         } else {
-          console.warn("Invalid instrument state received:", parsed);
+          console.warn("Invalid instrument state received:", status);
         }
       } catch {
         console.warn("Failed to parse state message:", evt.data);
@@ -34,8 +56,8 @@ export const useInstrumentStateStore = create<InstrumentStateState>((set) => {
   };
 
   useDataChannelStore.subscribe((state, prevState) => {
-    const newChannel = state.channels["state"];
-    const oldChannel = prevState.channels["state"];
+    const newChannel = state.channels["check_job_status"];
+    const oldChannel = prevState.channels["check_job_status"];
 
     if (oldChannel && currentListener && oldChannel !== newChannel) {
       oldChannel.removeEventListener("message", currentListener);

@@ -1,4 +1,4 @@
-import { useRef } from "react"
+import { useRef } from "react";
 import { Progress, Text, Box, Title, Card } from "@mantine/core";
 import { useState, useEffect } from "react";
 import { useProtocolStore } from "../../../stores/protocolStore";
@@ -19,15 +19,15 @@ type CycleCard = {
 
 export const ProtocolProgress = () => {
   const protocol = useProtocolStore((state) => state.protocol);
-  const theme = useThemeStore((state)=> state.colorScheme)
+  const theme = useThemeStore((state) => state.colorScheme);
   const [progress, setProgress] = useState<number>(0);
   const progressChannelRef = useRef<RTCDataChannel | null>(null);
   const dataChannels = useDataChannelStore((state) => state.channels);
   const [markers, setMarkers] = useState<Marker[]>([]);
   const themeColors = {
-    "light": ["#e0f2ff", "#f3f8fbff"],
-    "dark": ["#1e3a5f", "#2c2c2c"]
-    }
+    light: ["#e0f2ff", "#f3f8fbff"],
+    dark: ["#1e3a5f", "#2c2c2c"],
+  };
   const [cycleCards, setCycleCards] = useState<CycleCard[]>([
     {
       startPercent: 0,
@@ -146,19 +146,19 @@ export const ProtocolProgress = () => {
       >
         {cycleCards.map((c, idx) => (
           <Box>
-          <Box
-            style={{
-              position: "absolute",
-              bottom: `${c.startPercent + 1 / 2}%`,
-              height: `${c.endPercent - c.startPercent - 1}%`,
-              width: 400,
-              backgroundColor: themeColors[theme][idx % 2],
-              borderRadius: 8,
-              padding: 10,
-              zIndex: 0,
-            }}
-          />
-          <Text
+            <Box
+              style={{
+                position: "absolute",
+                bottom: `${c.startPercent + 1 / 2}%`,
+                height: `${c.endPercent - c.startPercent - 1}%`,
+                width: 400,
+                backgroundColor: themeColors[theme][idx % 2],
+                borderRadius: 8,
+                padding: 10,
+                zIndex: 0,
+              }}
+            />
+            <Text
               size="xl"
               style={{
                 position: "absolute",
@@ -167,21 +167,21 @@ export const ProtocolProgress = () => {
                 transform: "translateY(-50%)",
                 whiteSpace: "nowrap",
               }}
-            > 
-                Cycle {idx + 1}
+            >
+              Cycle {idx + 1}
             </Text>
-            </Box>
+          </Box>
         ))}
         <Progress
           size="xl"
-          value={100-progress}
+          value={100 - progress}
           orientation="vertical"
           radius="lg"
           style={{ width: 20 }}
           color="lightgray"
           styles={{
-          root: { backgroundColor: "blue" }, 
-        }}
+            root: { backgroundColor: "blue" },
+          }}
         />
         {markers.map((m, idx) => (
           <Box

@@ -10,7 +10,6 @@ import { api } from "../lib/client.tsx";
 import { useThemeStore } from "@/stores/themeStore";
 import { useAppConfigStore } from "@/stores/appConfigStore.ts";
 import { useInstrumentConfigStore } from "@/stores/instrumentConfigStore.ts";
-import { UseRunErrorHandling } from "@/hooks/useRunErrorHandling.ts";
 
 type AppProviderProps = {
   children: React.ReactNode;
@@ -58,8 +57,6 @@ export const AppProvider = ({ children }: AppProviderProps) => {
       pc.close();
     };
   }, [uiConfig, addChannel]);
-
-  UseRunErrorHandling()
 
   //  grab instrument config
   useEffect(() => {

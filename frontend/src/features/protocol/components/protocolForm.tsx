@@ -10,7 +10,7 @@ import "../assets/rjsf-spacing.css";
 import { WashVolumes } from "./washVolumes";
 import { useProtocolStore } from "../../../stores/protocolStore";
 import { useInstrumentStateStore } from "@/stores/instrumentStateStore.ts";
-import { formApi } from "../api/formApi"; 
+import { formApi } from "../api/formApi";
 
 export const getEmptyJob = (): BrainSlosherJobType => ({
   name: "",
@@ -28,8 +28,10 @@ export const getEmptyJob = (): BrainSlosherJobType => ({
 export const ProtocolForm = () => {
   const protocol = useProtocolStore((state) => state.protocol);
   const setProtocol = useProtocolStore((state) => state.setProtocol);
-  const state = useInstrumentStateStore((state) => state.state)
-  
+  const state = useInstrumentStateStore((state) => state.state);
+  const disabled = state == "running" ||  state == "paused"
+
+
   const loadConfig = (file: File | null) => {
     if (file) {
       const reader = new FileReader();
@@ -59,13 +61,13 @@ export const ProtocolForm = () => {
       radius="md"
       withBorder
       className="bg-gray-50"
-      style={{ 
+      style={{
         borderColor: "#333",
-        margin: "0.7rem", 
+        margin: "0.7rem",
         maxWidth: 600,
-        pointerEvents: state != "idle" ? "none" : "auto", // disable if state is not idle
-        opacity: state !== "idle" ? 0.5 : 1,
-       }}
+        pointerEvents: disabled ? "none" : "auto", // disable if state is not idle
+        opacity: disabled ? 0.5 : 1,
+      }}
     >
       <div
         className="protocol-form"
@@ -87,15 +89,16 @@ export const ProtocolForm = () => {
             validator={validator}
             formData={protocol}
             onChange={(e) => setProtocol(e.formData)}
-            disabled={ state != "idle"}
+            disabled={disabled}
           >
-            <WashVolumes/>
+            <WashVolumes />
             <Group style={{ justifyContent: "center" }}>
-              <Button 
-                m="xs" 
+              <Button
+                m="xs"
                 onClick={() => {
-                  formApi.postSaveForm(protocol)
-              }}>
+                  formApi.postSaveForm(protocol);
+                }}
+              >
                 Save
               </Button>
               <FileButton onChange={loadConfig} accept="json">

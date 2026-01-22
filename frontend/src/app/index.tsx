@@ -7,13 +7,13 @@ import { GlobalApiError } from "@/components/globalApiError/GlobalApiError.tsx";
 const App = () => {
   return (
     <GlobalApiError>
-    <AppProvider>
-      <BrowserRouter>
-        <MainLayout>
-          <AppRouter />
-        </MainLayout>
-      </BrowserRouter>
-    </AppProvider>
+      <AppProvider>
+        <BrowserRouter>
+          <MainLayout>
+            <AppRouter />
+          </MainLayout>
+        </BrowserRouter>
+      </AppProvider>
     </GlobalApiError>
   );
 };
