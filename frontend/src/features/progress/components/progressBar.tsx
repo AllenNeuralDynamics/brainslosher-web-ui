@@ -57,25 +57,25 @@ export const ProtocolProgress = () => {
   }, [dataChannels["progress"]]);
 
   // Calculate total duration and remaining time
-useEffect(() => {
-  if (!protocol?.protocol || protocol.protocol.length === 0) {
-    setDuration(null);
-    setRemaining(null);
-    return;
-  }
+  useEffect(() => {
+    if (!protocol?.protocol || protocol.protocol.length === 0) {
+      setDuration(null);
+      setRemaining(null);
+      return;
+    }
 
-  // Total duration in minutes
-  const totalDuration = protocol.protocol.reduce(
-    (sum, cycle) => sum + cycle.washes * cycle.duration_min,
-    0
-  );
+    // Total duration in minutes
+    const totalDuration = protocol.protocol.reduce(
+      (sum, cycle) => sum + cycle.washes * cycle.duration_min,
+      0,
+    );
 
-  setDuration(totalDuration);
+    setDuration(totalDuration);
 
-  // Remaining = totalDuration * (1 - progress/100)
-  const remainingTime = totalDuration * (1 - progress / 100);
-  setRemaining(Math.round(remainingTime));
-}, [protocol, progress]);
+    // Remaining = totalDuration * (1 - progress/100)
+    const remainingTime = totalDuration * (1 - progress / 100);
+    setRemaining(Math.round(remainingTime));
+  }, [protocol, progress]);
 
   function buildMarkers(protocol: Protocol): Marker[] {
     const totalDuration = protocol.reduce(
@@ -159,8 +159,8 @@ useEffect(() => {
           Progress
         </Title>
         <Stack ml="xl">
-        <Text>Duration: {duration} min</Text>
-        <Text>Remaining: {remaining} min</Text>
+          <Text>Duration: {duration} min</Text>
+          <Text>Remaining: {remaining} min</Text>
         </Stack>
       </Group>
       <Box

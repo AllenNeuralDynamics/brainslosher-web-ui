@@ -1,7 +1,13 @@
 import { create } from "zustand";
 import { useDataChannelStore } from "./dataChannelStore";
 
-export type InstrumentState = "running" | "idle" | "paused" | null;
+export type InstrumentState =
+  | "failed"
+  | "finished"
+  | "running"
+  | "paused"
+  | "idle"
+  | null;
 
 interface InstrumentStateState {
   state: InstrumentState;
@@ -20,8 +26,15 @@ export const useInstrumentStateStore = create<InstrumentStateState>((set) => {
     currentListener = (evt: MessageEvent) => {
       try {
         const parsed = JSON.parse(evt.data);
-        if (parsed === "running" || parsed === "idle" || parsed === "paused") {
+        if (
+          parsed === "running" ||
+          parsed === "idle" ||
+          parsed === "paused" ||
+          parsed === "finished"
+        ) {
           set({ state: parsed });
+        } else if (parsed === "failed") {
+          set({ state: "failed" });
         } else {
           console.warn("Invalid instrument state received:", parsed);
         }
