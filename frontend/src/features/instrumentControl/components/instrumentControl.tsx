@@ -22,7 +22,7 @@ export const InstrumentControl = () => {
   const instConfig = useInstrumentConfigStore((state) => state.config);
   const protocol = useProtocolStore((state) => state.protocol);
   const state = useInstrumentStateStore((state) => state.state);
-  const [opened, { open, close }] = useDisclosure(false);
+  const [opened, { open, close }] = useDisclosure(false);;
 
   useEffect(() => {
     if (instConfig && Object.keys(instConfig.selector_port_map).length > 0) {
@@ -50,7 +50,7 @@ export const InstrumentControl = () => {
       <Group>
         <Button
           mt="md"
-          disabled={state != "idle" && state != "paused"}
+          disabled={state == "running"}
           leftSection={<IconArrowNarrowUpDashed />}
           color="blue"
           onClick={() => instrumentControlApi.postFill(solution, washFill)}
@@ -79,7 +79,7 @@ export const InstrumentControl = () => {
       <Group grow>
         <Button
           color="rgb(56, 142, 190)"
-          disabled={state != "idle" && state != "paused"}
+          disabled={state == "running"}
           leftSection={<IconArrowNarrowDownDashed />}
           onClick={() => {
             instrumentControlApi.postDrain();
@@ -97,42 +97,43 @@ export const InstrumentControl = () => {
           Waste Emptied
         </Button>
       </Group>
-      {(state == "idle" || state == null) &&
-        protocol.history?.events == null && (
-          <Button
-            color="rgb(46, 204, 113)"
-            leftSection={<IconPlayerPlay />}
-            onClick={open}
-          >
-            Start
-          </Button>
-        )}
-      {state == "paused" && (
+      {state != "running" && state != "paused" && (
         <Button
-          color="rgb(230, 126, 34)"
-          leftSection={<IconRotateClockwise />}
-          onClick={open}
-        >
-          Restart
-        </Button>
-      )}
-      {state == "paused" && (
-        <Button
+          color="rgb(46, 204, 113)"
           leftSection={<IconPlayerPlay />}
-          color="rgb(88, 204, 164)"
-          onClick={() => instrumentControlApi.postResume()}
+          onClick={() => {
+            instrumentControlApi.postStart(protocol);
+          }}
         >
-          Resume
+          Start
         </Button>
       )}
       {state == "paused" && (
-        <Button
-          leftSection={<IconAlertHexagon />}
-          color="red"
-          onClick={() => instrumentControlApi.postClear()}
-        >
-          Clear Current Protocol
-        </Button>
+        <>
+          <Button
+            color="rgb(230, 126, 34)"
+            leftSection={<IconRotateClockwise />}
+            onClick={() => {
+              instrumentControlApi.postStart(protocol);
+            }}
+          >
+            Restart
+          </Button>
+          <Button
+            leftSection={<IconPlayerPlay />}
+            color="rgb(88, 204, 164)"
+            onClick={() => instrumentControlApi.postResume()}
+          >
+            Resume
+          </Button>
+          <Button
+            leftSection={<IconAlertHexagon />}
+            color="red"
+            onClick={() => instrumentControlApi.postClear()}
+          >
+            Clear Current Protocol
+          </Button>
+        </>
       )}
       {state == "running" && (
         <Button

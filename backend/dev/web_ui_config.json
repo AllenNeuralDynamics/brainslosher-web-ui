@@ -2,7 +2,8 @@
   "job_folder": "../../brain_slosher_jobs/",
   "data_channels": ["state", "progress", "check_job_status"],
     "gets": {
-      "/instrument_config":"get_config"
+      "/instrument_config":"get_config",
+      "/get_job": "get_job"
     },
   "posts": {
     "/waste_emptied":"empty_waste",

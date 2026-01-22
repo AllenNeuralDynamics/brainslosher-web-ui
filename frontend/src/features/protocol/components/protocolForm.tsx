@@ -29,6 +29,8 @@ export const ProtocolForm = () => {
   const protocol = useProtocolStore((state) => state.protocol);
   const setProtocol = useProtocolStore((state) => state.setProtocol);
   const state = useInstrumentStateStore((state) => state.state);
+  const disabled = state == "running" ||  state == "paused"
+
 
   const loadConfig = (file: File | null) => {
     if (file) {
@@ -63,8 +65,8 @@ export const ProtocolForm = () => {
         borderColor: "#333",
         margin: "0.7rem",
         maxWidth: 600,
-        pointerEvents: state != "idle" ? "none" : "auto", // disable if state is not idle
-        opacity: state !== "idle" ? 0.5 : 1,
+        pointerEvents: disabled ? "none" : "auto", // disable if state is not idle
+        opacity: disabled ? 0.5 : 1,
       }}
     >
       <div
@@ -87,7 +89,7 @@ export const ProtocolForm = () => {
             validator={validator}
             formData={protocol}
             onChange={(e) => setProtocol(e.formData)}
-            disabled={state != "idle"}
+            disabled={disabled}
           >
             <WashVolumes />
             <Group style={{ justifyContent: "center" }}>
