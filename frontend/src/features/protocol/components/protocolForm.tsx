@@ -26,13 +26,14 @@ export const getEmptyJob = (): BrainSlosherJobType => ({
 });
 
 export const ProtocolForm = () => {
+  const protocolSchema = useProtocolSchema();
   const protocol = useProtocolStore((state) => state.protocol);
   const setProtocol = useProtocolStore((state) => state.setProtocol);
   const state = useInstrumentStateStore((state) => state.state);
   const disabled = state == "running" ||  state == "paused"
 
 
-  const loadConfig = (file: File | null) => {
+  const loadProtocol = (file: File | null) => {
     if (file) {
       const reader = new FileReader();
       reader.onload = (e: ProgressEvent<FileReader>) => {
@@ -40,12 +41,14 @@ export const ProtocolForm = () => {
           const result = e.target?.result;
           if (typeof result !== "string") return;
           const parsedData = JSON.parse(result);
-          const validate = validator.ajv.compile(useProtocolSchema());
+          
+          const validate = validator.ajv.compile(protocolSchema);
           const valid = validate(parsedData);
           if (!valid) {
             throw new Error("Loaded json is not valid");
           }
           setProtocol(parsedData as BrainSlosherJobType);
+          formApi.postSetJob(parsedData as BrainSlosherJobType)
         } catch (error) {
           console.error("Error parsing JSON:", error);
         }
@@ -101,7 +104,7 @@ export const ProtocolForm = () => {
               >
                 Save
               </Button>
-              <FileButton onChange={loadConfig} accept="json">
+              <FileButton onChange={loadProtocol} accept="json">
                 {(props) => <Button {...props}>Load Protocol</Button>}
               </FileButton>
               <Button

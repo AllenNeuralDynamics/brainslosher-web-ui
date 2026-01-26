@@ -76,7 +76,7 @@ async def offer(request:Request):
     # set up handlers for connection events
     @pc.on("connectionstatechange")
     async def on_connectionstatechange():
-        logging.debug("Peer connection state change: ", pc.connectionState)
+        logging.info(f"Peer connection state change: { pc.connectionState}")
         if pc.connectionState == "failed":
             await pc.close()
     

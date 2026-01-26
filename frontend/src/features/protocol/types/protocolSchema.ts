@@ -29,7 +29,7 @@ export const useProtocolSchema = (): RJSFSchema => {
             title: "Protocol Path",
           },
           accessed: {
-            type: "string",
+            type: ["string", "null"],
             format: "date-time",
             title: "Last Accessed",
           },
@@ -72,7 +72,7 @@ export const useProtocolSchema = (): RJSFSchema => {
         default: 0,
       },
       resume_state: {
-        type: "object",
+        type: ["object", "null"],
         title: "Resume State",
         properties: {
           step: { type: "number", title: "Step" },
@@ -87,7 +87,6 @@ export const useProtocolSchema = (): RJSFSchema => {
             additionalProperties: {},
           },
         },
-        required: ["protocol", "motor_speed_rpm"],
       },
       history: {
         type: "object",

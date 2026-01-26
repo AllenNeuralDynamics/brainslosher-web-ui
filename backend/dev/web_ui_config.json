@@ -17,7 +17,8 @@
     "/stop_run":"stop",
     "/clear_run":"clear",
     "/save_job":"save_job",
-    "/set_email":"set_email"
+    "/set_email":"set_email",
+    "/set_job": "set_job"
 
   }
 }
