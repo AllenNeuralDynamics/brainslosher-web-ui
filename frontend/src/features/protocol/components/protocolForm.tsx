@@ -11,8 +11,9 @@ import { WashVolumes } from "./washVolumes";
 import { useProtocolStore } from "../../../stores/protocolStore";
 import { useInstrumentStateStore } from "@/stores/instrumentStateStore.ts";
 import { formApi } from "../api/formApi";
+import yaml from "js-yaml";
 
-export const getEmptyJob = (): BrainSlosherJobType => ({
+const getEmptyJob = (): BrainSlosherJobType => ({
   name: "",
   starting_solution: {},
   protocol: [
@@ -40,17 +41,17 @@ export const ProtocolForm = () => {
         try {
           const result = e.target?.result;
           if (typeof result !== "string") return;
-          const parsedData = JSON.parse(result);
+          const parsedData = yaml.load(result);
           
           const validate = validator.ajv.compile(protocolSchema);
           const valid = validate(parsedData);
           if (!valid) {
-            throw new Error("Loaded json is not valid");
+            throw new Error("Loaded job is not valid");
           }
           setProtocol(parsedData as BrainSlosherJobType);
           formApi.postSetJob(parsedData as BrainSlosherJobType)
         } catch (error) {
-          console.error("Error parsing JSON:", error);
+          console.error("Error parsing job:", error);
         }
       };
       reader.readAsText(file); // Read the file as text

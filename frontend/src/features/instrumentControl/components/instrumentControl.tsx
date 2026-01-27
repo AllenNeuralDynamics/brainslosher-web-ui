@@ -102,7 +102,7 @@ export const InstrumentControl = () => {
           color="rgb(46, 204, 113)"
           leftSection={<IconPlayerPlay />}
           onClick={() => {
-            instrumentControlApi.postStart(protocol);
+            open()
           }}
         >
           Start

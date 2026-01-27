@@ -2,7 +2,7 @@ import { create } from "zustand";
 import { useDataChannelStore } from "./dataChannelStore";
 
 interface ProgressState {
-  progress: number | null;
+  progress: number;
   setProgress: (progress: number) => void;
 }
 
@@ -44,7 +44,7 @@ export const useProgressStore = create<ProgressState>((set) => {
   });
 
   return {
-    progress: null,
+    progress: 0,
     setProgress: (progress) => set({ progress }),
   };
 });

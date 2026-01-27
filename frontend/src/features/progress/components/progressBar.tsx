@@ -5,6 +5,7 @@ import { useProtocolStore } from "../../../stores/protocolStore";
 import { useThemeStore } from "../../../stores/themeStore";
 import type { Protocol } from "../../protocol/types/protocolType";
 import { useDataChannelStore } from "@/stores/dataChannelStore.ts";
+import { useProgressStore } from "@/stores/progressStore";
 
 type Marker = {
   percent: number;
@@ -20,9 +21,6 @@ type CycleCard = {
 export const ProtocolProgress = () => {
   const protocol = useProtocolStore((state) => state.protocol);
   const theme = useThemeStore((state) => state.colorScheme);
-  const [progress, setProgress] = useState<number>(0);
-  const progressChannelRef = useRef<RTCDataChannel | null>(null);
-  const dataChannels = useDataChannelStore((state) => state.channels);
   const [markers, setMarkers] = useState<Marker[]>([]);
   const themeColors = {
     light: ["#e0f2ff", "#f3f8fbff"],
@@ -36,26 +34,7 @@ export const ProtocolProgress = () => {
   ]);
   const [duration, setDuration] = useState<number | null>();
   const [remaining, setRemaining] = useState<number | null>();
-
-  // initialize and connect instrument progress dataChannel
-  useEffect(() => {
-    // add progress channel
-    const progressChannel = dataChannels[`progress`];
-    if (!progressChannel) return;
-
-    const handleProgressMessage = (evt: MessageEvent) => {
-      const progress = JSON.parse(evt.data);
-      if (progress){
-      setProgress(progress);}
-    };
-    progressChannel.addEventListener("message", handleProgressMessage);
-    // create reference
-    progressChannelRef.current = progressChannel;
-
-    return () => {
-      progressChannel.removeEventListener("message", handleProgressMessage);
-    };
-  }, [dataChannels["progress"]]);
+  const progress = useProgressStore((state) => state.progress)
 
   // Calculate total duration and remaining time
   useEffect(() => {

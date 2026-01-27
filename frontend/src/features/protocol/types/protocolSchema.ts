@@ -98,7 +98,7 @@ export const useProtocolSchema = (): RJSFSchema => {
             items: {
               type: "object",
               properties: {
-                timestamp: { type: "string", format: "date-time" },
+                timestamp: { type: "string"},
                 type: {
                   type: "string",
                   enum: ["start", "end", "pause", "resume"],
