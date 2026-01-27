@@ -34,7 +34,7 @@ export const ProtocolProgress = () => {
   ]);
   const [duration, setDuration] = useState<number | null>();
   const [remaining, setRemaining] = useState<number | null>();
-  const progress = useProgressStore((state) => state.progress)
+  const progress = useProgressStore((state) => state.progress);
 
   // Calculate total duration and remaining time
   useEffect(() => {

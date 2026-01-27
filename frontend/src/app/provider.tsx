@@ -48,10 +48,9 @@ export const AppProvider = ({ children }: AppProviderProps) => {
     async function fetchjob() {
       try {
         const job = await api.get("/get_job");
-        if (job.data){
+        if (job.data) {
           setProtocol({ ...job.data });
         }
-        
       } catch (error) {
         console.error("Error fetching protocol:", error);
       }

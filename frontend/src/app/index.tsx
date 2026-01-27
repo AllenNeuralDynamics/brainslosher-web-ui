@@ -6,15 +6,15 @@ import { GlobalApiError } from "@/components/globalApiError/GlobalApiError.tsx";
 
 const App = () => {
   return (
-      <AppProvider>
-        <GlobalApiError>
+    <AppProvider>
+      <GlobalApiError>
         <BrowserRouter>
           <MainLayout>
             <AppRouter />
           </MainLayout>
         </BrowserRouter>
-        </GlobalApiError>
-      </AppProvider>
+      </GlobalApiError>
+    </AppProvider>
   );
 };
 

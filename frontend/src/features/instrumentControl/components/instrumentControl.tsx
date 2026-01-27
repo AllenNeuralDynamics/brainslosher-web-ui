@@ -22,7 +22,7 @@ export const InstrumentControl = () => {
   const instConfig = useInstrumentConfigStore((state) => state.config);
   const protocol = useProtocolStore((state) => state.protocol);
   const state = useInstrumentStateStore((state) => state.state);
-  const [opened, { open, close }] = useDisclosure(false);;
+  const [opened, { open, close }] = useDisclosure(false);
 
   useEffect(() => {
     if (instConfig && Object.keys(instConfig.selector_port_map).length > 0) {
@@ -102,7 +102,7 @@ export const InstrumentControl = () => {
           color="rgb(46, 204, 113)"
           leftSection={<IconPlayerPlay />}
           onClick={() => {
-            open()
+            open();
           }}
         >
           Start

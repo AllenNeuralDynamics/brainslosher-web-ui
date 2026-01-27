@@ -7,7 +7,7 @@ import { FinishModal } from "@/components/ui/FinishModal/finishModal.tsx";
 export const HomePage = () => {
   return (
     <div>
-      <FinishModal/>
+      <FinishModal />
       <Group style={{ alignItems: "stretch", justifyContent: "center" }}>
         <ProtocolForm />
         <Stack>

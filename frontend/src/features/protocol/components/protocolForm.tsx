@@ -1,3 +1,4 @@
+import { useRef } from "react";
 import validator from "@rjsf/validator-ajv8";
 import Form from "@rjsf/mantine";
 import { Button, FileButton, Title, Card, Group } from "@mantine/core";
@@ -31,28 +32,38 @@ export const ProtocolForm = () => {
   const protocol = useProtocolStore((state) => state.protocol);
   const setProtocol = useProtocolStore((state) => state.setProtocol);
   const state = useInstrumentStateStore((state) => state.state);
-  const disabled = state == "running" ||  state == "paused"
-
+  const disabled = state == "running" || state == "paused";
+  const resetRef = useRef<() => void>(null);
 
   const loadProtocol = (file: File | null) => {
     if (file) {
       const reader = new FileReader();
       reader.onload = (e: ProgressEvent<FileReader>) => {
-        try {
-          const result = e.target?.result;
-          if (typeof result !== "string") return;
-          const parsedData = yaml.load(result);
-          
-          const validate = validator.ajv.compile(protocolSchema);
-          const valid = validate(parsedData);
-          if (!valid) {
-            throw new Error("Loaded job is not valid");
-          }
-          setProtocol(parsedData as BrainSlosherJobType);
-          formApi.postSetJob(parsedData as BrainSlosherJobType)
-        } catch (error) {
-          console.error("Error parsing job:", error);
+        const result = e.target?.result;
+        if (typeof result !== "string") return;
+        const parsedData = yaml.load(result);
+
+        const validate = validator.ajv.compile(protocolSchema);
+        const valid = validate(parsedData);
+        if (!valid) {
+          console.log(parsedData);
+          const errorMessage =
+            validate.errors
+              ?.map((err) => {
+                const path = err.instancePath || "(root)";
+                return `${path} ${err.message}`;
+              })
+              .join("\n") ?? "Schema validation failed";
+
+          window.dispatchEvent(
+            new CustomEvent("error", {
+              detail: { message: errorMessage },
+            }),
+          );
+          return;
         }
+        setProtocol(parsedData as BrainSlosherJobType);
+        formApi.postSetJob(parsedData as BrainSlosherJobType);
       };
       reader.readAsText(file); // Read the file as text
     }
@@ -105,7 +116,14 @@ export const ProtocolForm = () => {
               >
                 Save
               </Button>
-              <FileButton onChange={loadProtocol} accept="json">
+              <FileButton
+                resetRef={resetRef}
+                accept=".yaml,.yml"
+                onChange={(file) => {
+                  loadProtocol(file);
+                  resetRef.current?.();   // reset file secected
+                }}
+              >
                 {(props) => <Button {...props}>Load Protocol</Button>}
               </FileButton>
               <Button

@@ -13,7 +13,12 @@ export const FinishModal = () => {
   }, [status]);
 
   return (
-    <Modal opened={opened} onClose={() => setOpened(false)} title="Job finished 🎉" centered>
+    <Modal
+      opened={opened}
+      onClose={() => setOpened(false)}
+      title="Job finished 🎉"
+      centered
+    >
       <Text>The protocol has completed successfully!</Text>
     </Modal>
   );
