@@ -160,8 +160,7 @@ export const ProtocolProgress = () => {
       parts.push(`${seconds}s`);
     } else {
       // Show minutes, keeping fractions if any
-      const minutes =
-        rawMinutes % 1 === 0 ? rawMinutes : parseFloat(rawMinutes.toFixed(2));
+      const minutes = Math.round(rawMinutes);
       if (minutes || parts.length === 0) parts.push(`${minutes}m`);
     }
 
