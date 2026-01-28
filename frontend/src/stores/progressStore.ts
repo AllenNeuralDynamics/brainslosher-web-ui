@@ -18,7 +18,6 @@ export const useProgressStore = create<ProgressState>((set) => {
       try {
         const parsed = JSON.parse(evt.data);
         if (typeof parsed === "number") {
-          console.log(parsed)
           set({ progress: parsed });
         } else {
           console.warn("Invalid progress message:", evt.data);
