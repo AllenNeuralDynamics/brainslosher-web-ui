@@ -1,10 +1,9 @@
-import { useRef } from "react";
 import { Progress, Text, Box, Title, Card, Group, Stack } from "@mantine/core";
 import { useState, useEffect } from "react";
 import { useProtocolStore } from "../../../stores/protocolStore";
 import { useThemeStore } from "../../../stores/themeStore";
-import type { Protocol } from "../../protocol/types/protocolType";
-import { useDataChannelStore } from "@/stores/dataChannelStore.ts";
+import type { Protocol } from "../../../types/protocolType";
+import { useStartTimeSore } from "@/stores/startTimeStore.ts";
 import { useProgressStore } from "@/stores/progressStore";
 
 type Marker = {
@@ -32,15 +31,16 @@ export const ProtocolProgress = () => {
       endPercent: 100,
     },
   ]);
-  const [duration, setDuration] = useState<number | null>();
-  const [remaining, setRemaining] = useState<number | null>();
+  const [duration, setDuration] = useState<number | null>(null);
+  const [remaining, setRemaining] = useState<number | null>(null);
+  const startTime = useStartTimeSore((state) => state.startTime);
+  const [endTime, setEndTime] = useState<string>("");
   const progress = useProgressStore((state) => state.progress);
 
-  // Calculate total duration and remaining time
+  // Calculate total duration
   useEffect(() => {
     if (!protocol?.protocol || protocol.protocol.length === 0) {
       setDuration(null);
-      setRemaining(null);
       return;
     }
 
@@ -51,11 +51,50 @@ export const ProtocolProgress = () => {
     );
 
     setDuration(totalDuration);
+  }, [protocol]);
 
-    // Remaining = totalDuration * (1 - progress/100)
-    const remainingTime = totalDuration * (1 - progress / 100);
+  // Calculate remaining time
+  useEffect(() => {
+    if (!duration) {
+      setDuration(null);
+      return;
+    }
+
+    const remainingTime = duration * (1 - progress / 100);
     setRemaining(Math.round(remainingTime));
-  }, [protocol, progress]);
+  }, [progress]);
+
+  // Calculate end time
+  useEffect(() => {
+    if (!remaining) return;
+
+    const pauseEvent = protocol.history?.events?.find(
+      (event) => event.type == "pause",
+    );
+    if (pauseEvent) {
+      const pauseDate = new Date(pauseEvent.timestamp);
+      const endDate = new Date(pauseDate.getTime() + remaining * 60_000);
+      const formatted = endDate.toLocaleString(undefined, {
+        year: "numeric",
+        month: "short",
+        day: "2-digit",
+        hour: "2-digit",
+        minute: "2-digit",
+      });
+      setEndTime(formatted);
+    } else if (startTime) {
+      const startDate = new Date(startTime);
+      const endDate = new Date(startDate.getTime() + remaining * 60_000);
+      const formatted = endDate.toLocaleString(undefined, {
+        year: "numeric",
+        month: "short",
+        day: "2-digit",
+        hour: "2-digit",
+        minute: "2-digit",
+      });
+      setEndTime(formatted);
+    }
+  }, [protocol]);
 
   function buildMarkers(protocol: Protocol): Marker[] {
     const totalDuration = protocol.reduce(
@@ -114,6 +153,21 @@ export const ProtocolProgress = () => {
     setCycleCards(buildCycleCards(protocol.protocol));
   }, [protocol]);
 
+  function formatMinutes(totalMinutes: number | null): string | null {
+    if (!totalMinutes) return null;
+
+    const days = Math.floor(totalMinutes / (60 * 24));
+    const hours = Math.floor((totalMinutes % (60 * 24)) / 60);
+    const minutes = Math.floor(totalMinutes % 60);
+
+    const parts: string[] = [];
+    if (days) parts.push(`${days}d`);
+    if (hours) parts.push(`${hours}h`);
+    if (minutes || parts.length === 0) parts.push(`${minutes}m`);
+
+    return parts.join(" ");
+  }
+
   return (
     <Card
       shadow="m"
@@ -132,15 +186,20 @@ export const ProtocolProgress = () => {
         <Title
           style={{
             fontWeight: "bold",
-            marginBottom: "1.5rem",
+            marginBottom: "4rem",
             textAlign: "center",
           }}
         >
           Progress
         </Title>
-        <Stack ml="xl">
-          <Text>Duration: {duration} min</Text>
-          <Text>Remaining: {remaining} min</Text>
+        <Stack
+          ml="xl"
+          style={{
+            marginBottom: "3rem",
+          }}
+        >
+          <Text>Duration: {formatMinutes(duration)} min</Text>
+          <Text>Remaining: {formatMinutes(remaining)} min</Text>
         </Stack>
       </Group>
       <Box
@@ -191,12 +250,56 @@ export const ProtocolProgress = () => {
             root: { backgroundColor: "blue" },
           }}
         />
+        <Box // start time box
+          key="startTime"
+          style={{
+            position: "absolute",
+            bottom: `calc(105% - 20px)`,
+            left: "-50%",
+            display: "flex",
+            alignItems: "center",
+            pointerEvents: "none",
+          }}
+        >
+          <Text
+            size="md"
+            style={{
+              position: "absolute",
+              transform: "translateY(-50%)",
+              whiteSpace: "nowrap",
+            }}
+          >
+            {startTime}
+          </Text>
+        </Box>
+        <Box // end time box
+          key="endTime"
+          style={{
+            position: "absolute",
+            bottom: `calc(-1.5% - 20px)`,
+            left: "-50%",
+            display: "flex",
+            alignItems: "center",
+            pointerEvents: "none",
+          }}
+        >
+          <Text
+            size="md"
+            style={{
+              position: "absolute",
+              transform: "translateY(-50%)",
+              whiteSpace: "nowrap",
+            }}
+          >
+            {endTime}
+          </Text>
+        </Box>
         {markers.map((m, idx) => (
           <Box
             key={idx}
             style={{
               position: "absolute",
-              bottom: `calc(${m.percent}% - 20px)`,
+              bottom: `calc(${m.percent - 2}% - 20px)`,
               left: "30%",
               transform: "translateX(-50%)",
               display: "flex",

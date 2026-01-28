@@ -5,6 +5,7 @@ import { instrumentControlApi } from "../api/instrumentControlApi.ts";
 import { useInstrumentConfigStore } from "@/stores/instrumentConfigStore.ts";
 import { useProtocolStore } from "@/stores/protocolStore.ts";
 import { useInstrumentStateStore } from "@/stores/instrumentStateStore.ts";
+import { useStartTimeSore } from "@/stores/startTimeStore.ts";
 import {
   IconAlertHexagon,
   IconTrash,
@@ -15,13 +16,16 @@ import {
   IconPlayerPause,
 } from "@tabler/icons-react";
 import { RunSummaryModal } from "./runSummaryCheck.tsx";
+import { getEmptyJob } from "@/utils/getEmptyJob";
 
 export const InstrumentControl = () => {
   const [washFill, setWashFill] = useState<number>(11);
   const [solution, setSolution] = useState<string>("");
   const instConfig = useInstrumentConfigStore((state) => state.config);
   const protocol = useProtocolStore((state) => state.protocol);
+  const setProtocol = useProtocolStore((state) => state.setProtocol);
   const state = useInstrumentStateStore((state) => state.state);
+  const setStartTime = useStartTimeSore((state) => state.setStartTime);
   const [opened, { open, close }] = useDisclosure(false);
 
   useEffect(() => {
@@ -44,6 +48,15 @@ export const InstrumentControl = () => {
         onClose={close}
         onConfirm={() => {
           instrumentControlApi.postStart(protocol);
+          const d = new Date();
+          const formatted = d.toLocaleString(undefined, {
+            year: "numeric",
+            month: "short",
+            day: "2-digit",
+            hour: "2-digit",
+            minute: "2-digit",
+          });
+          setStartTime(formatted);
           close();
         }}
       />
@@ -114,7 +127,7 @@ export const InstrumentControl = () => {
             color="rgb(230, 126, 34)"
             leftSection={<IconRotateClockwise />}
             onClick={() => {
-              instrumentControlApi.postStart(protocol);
+              open();
             }}
           >
             Restart
@@ -129,7 +142,11 @@ export const InstrumentControl = () => {
           <Button
             leftSection={<IconAlertHexagon />}
             color="red"
-            onClick={() => instrumentControlApi.postClear()}
+            onClick={() => {
+              instrumentControlApi.postClear();
+              setProtocol(getEmptyJob());
+              setStartTime("");
+            }}
           >
             Clear Current Protocol
           </Button>

@@ -6,30 +6,20 @@ import {
   useProtocolSchema,
   useProtocolUiSchema,
 } from "../types/protocolSchema";
-import type { BrainSlosherJobType } from "../types/protocolType";
 import "../assets/rjsf-spacing.css";
 import { WashVolumes } from "./washVolumes";
 import { useProtocolStore } from "../../../stores/protocolStore";
 import { useInstrumentStateStore } from "@/stores/instrumentStateStore.ts";
+import { useStartTimeSore } from "@/stores/startTimeStore.ts";
+import { getEmptyJob } from "@/utils/getEmptyJob";
+import type { BrainSlosherJobType } from "@/types/protocolType";
 import { formApi } from "../api/formApi";
 import yaml from "js-yaml";
-
-const getEmptyJob = (): BrainSlosherJobType => ({
-  name: "",
-  starting_solution: {},
-  protocol: [
-    {
-      solution: "",
-      duration_min: 0,
-      washes: 0,
-    },
-  ],
-  motor_speed_rpm: 0,
-});
 
 export const ProtocolForm = () => {
   const protocolSchema = useProtocolSchema();
   const protocol = useProtocolStore((state) => state.protocol);
+  const setStartTime = useStartTimeSore((state) => state.setStartTime);
   const setProtocol = useProtocolStore((state) => state.setProtocol);
   const state = useInstrumentStateStore((state) => state.state);
   const disabled = state == "running" || state == "paused";
@@ -62,8 +52,27 @@ export const ProtocolForm = () => {
           );
           return;
         }
-        setProtocol(parsedData as BrainSlosherJobType);
-        formApi.postSetJob(parsedData as BrainSlosherJobType);
+        const protocolData = parsedData as BrainSlosherJobType;
+        setProtocol(protocolData);
+        formApi.postSetJob(protocolData);
+
+        const startEvent = protocolData.history?.events?.find(
+          (event) => event.type == "start",
+        );
+
+        if (startEvent) {
+          const d = new Date(startEvent.timestamp);
+          const formatted = d.toLocaleString(undefined, {
+            year: "numeric",
+            month: "short",
+            day: "2-digit",
+            hour: "2-digit",
+            minute: "2-digit",
+          });
+          setStartTime(formatted);
+        } else {
+          setStartTime("");
+        }
       };
       reader.readAsText(file); // Read the file as text
     }
@@ -121,7 +130,7 @@ export const ProtocolForm = () => {
                 accept=".yaml,.yml"
                 onChange={(file) => {
                   loadProtocol(file);
-                  resetRef.current?.();   // reset file secected
+                  resetRef.current?.(); // reset file secected
                 }}
               >
                 {(props) => <Button {...props}>Load Protocol</Button>}
@@ -130,7 +139,9 @@ export const ProtocolForm = () => {
                 m="xs"
                 type="button"
                 onClick={() => {
-                  setProtocol(getEmptyJob());
+                  const form = getEmptyJob();
+                  setProtocol(form);
+                  formApi.postSetJob(form);
                 }}
               >
                 Clear

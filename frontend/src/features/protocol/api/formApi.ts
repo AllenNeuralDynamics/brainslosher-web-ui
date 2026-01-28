@@ -1,5 +1,5 @@
 import { api } from "../../../lib/client.tsx";
-import type { BrainSlosherJobType } from "../types/protocolType";
+import type { BrainSlosherJobType } from "../../../types/protocolType.tsx";
 
 export const formApi = {
   postSaveForm: (form: BrainSlosherJobType) =>
