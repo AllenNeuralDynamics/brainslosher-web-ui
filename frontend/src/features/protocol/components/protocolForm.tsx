@@ -75,7 +75,7 @@ export const ProtocolForm = () => {
         }
         const protocolData = parsedData as BrainSlosherJobType;
         formApi.postSetJob(protocolData);
-        setProtocol(protocolData)
+        setProtocol(protocolData);
       };
       reader.readAsText(file); // Read the file as text
     }

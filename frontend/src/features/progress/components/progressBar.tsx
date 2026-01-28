@@ -72,32 +72,17 @@ export const ProtocolProgress = () => {
       setEndTime("");
       return;
     }
-    const pauseEvent = protocol.history?.events?.find(
-      (event) => event.type == "pause",
-    );
-    if (pauseEvent) {
-      const nowDate = new Date();
-      const endDate = new Date(nowDate.getTime() + remaining * 60_000);
-      const formatted = endDate.toLocaleString(undefined, {
-        year: "numeric",
-        month: "short",
-        day: "2-digit",
-        hour: "2-digit",
-        minute: "2-digit",
-      });
-      setEndTime(formatted);
-    } else if (startTime) {
-      const startDate = new Date(startTime);
-      const endDate = new Date(startDate.getTime() + remaining * 60_000);
-      const formatted = endDate.toLocaleString(undefined, {
-        year: "numeric",
-        month: "short",
-        day: "2-digit",
-        hour: "2-digit",
-        minute: "2-digit",
-      });
-      setEndTime(formatted);
-    }
+
+    const nowDate = new Date();
+    const endDate = new Date(nowDate.getTime() + remaining * 60_000);
+    const formatted = endDate.toLocaleString(undefined, {
+      year: "numeric",
+      month: "short",
+      day: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+    setEndTime(formatted);
   }, [state]);
 
   function buildMarkers(protocol: Protocol): Marker[] {

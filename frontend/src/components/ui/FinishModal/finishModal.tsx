@@ -13,7 +13,7 @@ export const FinishModal = () => {
     if (status === "finished") {
       setOpened(true);
       // clear protocol to avoid resume state and history confusion
-      setProtocol(getEmptyJob())
+      setProtocol(getEmptyJob());
     }
   }, [status]);
 
