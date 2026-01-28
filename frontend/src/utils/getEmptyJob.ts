@@ -5,7 +5,7 @@ export const getEmptyJob = (): BrainSlosherJobType => ({
   starting_solution: {},
   protocol: [
     {
-      solution: "",
+      solution: undefined as unknown as string, // raise validation error if not filled in by user
       duration_min: 1,
       washes: 1,
     },

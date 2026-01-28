@@ -1,4 +1,4 @@
-import { useRef } from "react";
+import { useRef, useEffect } from "react";
 import validator from "@rjsf/validator-ajv8";
 import Form from "@rjsf/mantine";
 import { Button, FileButton, Title, Card, Group } from "@mantine/core";
@@ -25,6 +25,28 @@ export const ProtocolForm = () => {
   const disabled = state == "running" || state == "paused";
   const resetRef = useRef<() => void>(null);
 
+  // update start time when protocol updates
+  useEffect(() => {
+    const startEvent = protocol.history?.events?.find(
+      (event) => event.type == "start",
+    );
+
+    if (startEvent) {
+      const d = new Date(startEvent.timestamp);
+      const formatted = d.toLocaleString(undefined, {
+        year: "numeric",
+        month: "short",
+        day: "2-digit",
+        hour: "2-digit",
+        minute: "2-digit",
+      });
+      setStartTime(formatted);
+    } else {
+      setStartTime("");
+    }
+  }, [protocol]);
+
+  // load, validatem and post protocol when user presses load button
   const loadProtocol = (file: File | null) => {
     if (file) {
       const reader = new FileReader();
@@ -36,7 +58,6 @@ export const ProtocolForm = () => {
         const validate = validator.ajv.compile(protocolSchema);
         const valid = validate(parsedData);
         if (!valid) {
-          console.log(parsedData);
           const errorMessage =
             validate.errors
               ?.map((err) => {
@@ -53,26 +74,8 @@ export const ProtocolForm = () => {
           return;
         }
         const protocolData = parsedData as BrainSlosherJobType;
-        setProtocol(protocolData);
         formApi.postSetJob(protocolData);
-
-        const startEvent = protocolData.history?.events?.find(
-          (event) => event.type == "start",
-        );
-
-        if (startEvent) {
-          const d = new Date(startEvent.timestamp);
-          const formatted = d.toLocaleString(undefined, {
-            year: "numeric",
-            month: "short",
-            day: "2-digit",
-            hour: "2-digit",
-            minute: "2-digit",
-          });
-          setStartTime(formatted);
-        } else {
-          setStartTime("");
-        }
+        setProtocol(protocolData)
       };
       reader.readAsText(file); // Read the file as text
     }
@@ -108,6 +111,7 @@ export const ProtocolForm = () => {
             Protocol
           </Title>
           <Form
+            key={JSON.stringify(protocol)} // remount whenever protocol changes
             uiSchema={useProtocolUiSchema()}
             schema={useProtocolSchema()}
             validator={validator}

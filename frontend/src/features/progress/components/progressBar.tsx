@@ -5,6 +5,7 @@ import { useThemeStore } from "../../../stores/themeStore";
 import type { Protocol } from "../../../types/protocolType";
 import { useStartTimeSore } from "@/stores/startTimeStore.ts";
 import { useProgressStore } from "@/stores/progressStore";
+import { useInstrumentStateStore } from "@/stores/instrumentStateStore.ts";
 
 type Marker = {
   percent: number;
@@ -18,6 +19,7 @@ type CycleCard = {
 };
 
 export const ProtocolProgress = () => {
+  const state = useInstrumentStateStore((state) => state.state);
   const protocol = useProtocolStore((state) => state.protocol);
   const theme = useThemeStore((state) => state.colorScheme);
   const [markers, setMarkers] = useState<Marker[]>([]);
@@ -56,24 +58,26 @@ export const ProtocolProgress = () => {
   // Calculate remaining time
   useEffect(() => {
     if (!duration) {
-      setDuration(null);
+      setRemaining(null);
       return;
     }
 
     const remainingTime = duration * (1 - progress / 100);
-    setRemaining(Math.round(remainingTime));
-  }, [progress]);
+    setRemaining(Math.round(remainingTime * 100) / 100);
+  }, [progress, duration]);
 
   // Calculate end time
   useEffect(() => {
-    if (!remaining) return;
-
+    if (!remaining || state != "running") {
+      setEndTime("");
+      return;
+    }
     const pauseEvent = protocol.history?.events?.find(
       (event) => event.type == "pause",
     );
     if (pauseEvent) {
-      const pauseDate = new Date(pauseEvent.timestamp);
-      const endDate = new Date(pauseDate.getTime() + remaining * 60_000);
+      const nowDate = new Date();
+      const endDate = new Date(nowDate.getTime() + remaining * 60_000);
       const formatted = endDate.toLocaleString(undefined, {
         year: "numeric",
         month: "short",
@@ -94,7 +98,7 @@ export const ProtocolProgress = () => {
       });
       setEndTime(formatted);
     }
-  }, [protocol]);
+  }, [state]);
 
   function buildMarkers(protocol: Protocol): Marker[] {
     const totalDuration = protocol.reduce(
@@ -158,12 +162,23 @@ export const ProtocolProgress = () => {
 
     const days = Math.floor(totalMinutes / (60 * 24));
     const hours = Math.floor((totalMinutes % (60 * 24)) / 60);
-    const minutes = Math.floor(totalMinutes % 60);
+    const rawMinutes = totalMinutes % 60;
 
     const parts: string[] = [];
+
     if (days) parts.push(`${days}d`);
     if (hours) parts.push(`${hours}h`);
-    if (minutes || parts.length === 0) parts.push(`${minutes}m`);
+
+    if (totalMinutes < 1) {
+      // Show seconds if under a minute
+      const seconds = Math.round(totalMinutes * 60);
+      parts.push(`${seconds}s`);
+    } else {
+      // Show minutes, keeping fractions if any
+      const minutes =
+        rawMinutes % 1 === 0 ? rawMinutes : parseFloat(rawMinutes.toFixed(2));
+      if (minutes || parts.length === 0) parts.push(`${minutes}m`);
+    }
 
     return parts.join(" ");
   }
@@ -198,8 +213,8 @@ export const ProtocolProgress = () => {
             marginBottom: "3rem",
           }}
         >
-          <Text>Duration: {formatMinutes(duration)} min</Text>
-          <Text>Remaining: {formatMinutes(remaining)} min</Text>
+          <Text>Duration: {formatMinutes(duration)}</Text>
+          <Text>Remaining: {formatMinutes(remaining)}</Text>
         </Stack>
       </Group>
       <Box
