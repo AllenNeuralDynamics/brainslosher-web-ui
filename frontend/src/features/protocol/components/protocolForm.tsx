@@ -111,7 +111,7 @@ export const ProtocolForm = () => {
             Protocol
           </Title>
           <Form
-            key={JSON.stringify(protocol)} // remount whenever protocol changes
+            key={state} // remount whenever state changes to reflect current protocol
             uiSchema={useProtocolUiSchema()}
             schema={useProtocolSchema()}
             validator={validator}

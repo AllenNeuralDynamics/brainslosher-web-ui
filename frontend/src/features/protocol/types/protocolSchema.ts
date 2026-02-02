@@ -141,6 +141,7 @@ export const useProtocolUiSchema = () => {
       items: {
         solution: {
           "ui:widget": "select",
+          "ui:placeholder": "Select solution",
           "ui.enumNames": valveLabels,
           "ui:options": {
             enumNames: valveLabels,
