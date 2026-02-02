@@ -14,7 +14,7 @@ export type InstrumentState = {
   message: string;
 };
 
-interface InstrumentStateState {
+type InstrumentStateState = {
   state: InstrumentStateStatus;
   setState: (state: InstrumentStateStatus) => void;
 }

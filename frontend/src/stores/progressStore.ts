@@ -1,7 +1,7 @@
 import { create } from "zustand";
 import { useDataChannelStore } from "./dataChannelStore";
 
-interface ProgressState {
+type ProgressState = {
   progress: number;
   setProgress: (progress: number) => void;
 }

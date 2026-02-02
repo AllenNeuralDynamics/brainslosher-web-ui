@@ -2,11 +2,11 @@ import { useEffect, useState } from "react";
 import type { ReactNode } from "react";
 import { Modal, Button, Text } from "@mantine/core";
 
-interface GlobalApiErrorProps {
+type GlobalApiErrorProps = {
   children: ReactNode;
 }
 
-interface ApiError {
+type ApiError = {
   message: string;
   status?: number;
   url?: string;

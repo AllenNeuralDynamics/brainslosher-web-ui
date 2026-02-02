@@ -1,10 +1,10 @@
-export interface AppConfig {
+export type AppConfig = {
   data_channels: string[];
   gets: Record<string, string>;
   posts: Record<string, string>;
 }
 
-export interface InstrumentConfig {
+export type InstrumentConfig = {
   selector_port_map: Record<string, number>;
   max_syringe_volume_ml: number;
   prime_volume_ml: number;

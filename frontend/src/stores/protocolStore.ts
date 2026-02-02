@@ -2,7 +2,7 @@ import { create } from "zustand";
 import type { BrainSlosherJobType } from "@/types/protocolType";
 import { getEmptyJob } from "@/utils/getEmptyJob";
 
-interface ProtocolStore {
+type ProtocolStore = {
   protocol: BrainSlosherJobType;
   setProtocol: (protocol: BrainSlosherJobType) => void;
 }

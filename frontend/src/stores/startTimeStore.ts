@@ -1,6 +1,6 @@
 import { create } from "zustand";
 
-interface StartTimeStore {
+type StartTimeStore = {
   startTime: string;
   setStartTime: (time: string) => void;
 }

@@ -1,7 +1,7 @@
 import { create } from "zustand";
 import type { InstrumentConfig } from "@/types/configTypes.tsx";
 
-interface InstrumentConfigStore {
+type InstrumentConfigStore = {
   config: InstrumentConfig | null;
   setConfig: (cfg: InstrumentConfig) => void;
 }
