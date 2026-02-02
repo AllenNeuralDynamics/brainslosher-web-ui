@@ -6,7 +6,7 @@
 <img src="docs\images\full_page.png" height="400">
 
 
-React Web app built to control the brainslosher instrument. Still in review and development. Latest branch is feat-details.
+React Web app built to control the brainslosher instrument. Still in review and development.
 
 ### Prerequisites
 
