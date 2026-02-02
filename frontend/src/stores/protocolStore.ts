@@ -5,7 +5,7 @@ import { getEmptyJob } from "@/utils/getEmptyJob";
 type ProtocolStore = {
   protocol: BrainSlosherJobType;
   setProtocol: (protocol: BrainSlosherJobType) => void;
-}
+};
 
 export const useProtocolStore = create<ProtocolStore>((set) => ({
   protocol: getEmptyJob(),

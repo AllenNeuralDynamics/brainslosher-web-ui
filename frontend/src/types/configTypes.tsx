@@ -2,7 +2,7 @@ export type AppConfig = {
   data_channels: string[];
   gets: Record<string, string>;
   posts: Record<string, string>;
-}
+};
 
 export type InstrumentConfig = {
   selector_port_map: Record<string, number>;
@@ -12,4 +12,4 @@ export type InstrumentConfig = {
   drain_volume_buffer_ml: number;
   fill_volume_ml: number;
   user_email: string | null;
-}
+};

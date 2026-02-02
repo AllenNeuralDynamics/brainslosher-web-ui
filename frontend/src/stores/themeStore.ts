@@ -5,7 +5,7 @@ type ThemeStore = {
   colorScheme: "light" | "dark";
   toggleColorScheme: () => void;
   setColorScheme: (scheme: "light" | "dark") => void;
-}
+};
 
 export const useThemeStore = create<ThemeStore>()(
   persist(

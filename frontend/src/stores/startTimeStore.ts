@@ -3,7 +3,7 @@ import { create } from "zustand";
 type StartTimeStore = {
   startTime: string;
   setStartTime: (time: string) => void;
-}
+};
 
 export const useStartTimeSore = create<StartTimeStore>((set) => ({
   startTime: "",

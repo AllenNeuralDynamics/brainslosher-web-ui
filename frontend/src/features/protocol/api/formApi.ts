@@ -6,6 +6,5 @@ export const formApi = {
     api.post(`/save_job`, { job: form }),
   postSetJob: (form: BrainSlosherJobType) =>
     api.post(`/set_job`, { job: form }),
-  postClearJob: () =>
-    api.post(`/clear_run`),
+  postClearJob: () => api.post(`/clear_run`),
 };

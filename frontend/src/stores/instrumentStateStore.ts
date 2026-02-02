@@ -17,7 +17,7 @@ export type InstrumentState = {
 type InstrumentStateState = {
   state: InstrumentStateStatus;
   setState: (state: InstrumentStateStatus) => void;
-}
+};
 
 export const useInstrumentStateStore = create<InstrumentStateState>((set) => {
   let currentListener: ((evt: MessageEvent) => void) | null = null;

@@ -4,7 +4,7 @@ import { useDataChannelStore } from "./dataChannelStore";
 type ProgressState = {
   progress: number;
   setProgress: (progress: number) => void;
-}
+};
 
 export const useProgressStore = create<ProgressState>((set) => {
   let currentListener: ((evt: MessageEvent) => void) | null = null;

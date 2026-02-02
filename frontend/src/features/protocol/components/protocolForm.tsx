@@ -146,7 +146,7 @@ export const ProtocolForm = () => {
                 onClick={() => {
                   const form = getEmptyJob();
                   setProtocol(form);
-                  setFormKey(k => k + 1);
+                  setFormKey((k) => k + 1);
                   formApi.postClearJob();
                 }}
               >

@@ -4,13 +4,13 @@ import { Modal, Button, Text } from "@mantine/core";
 
 type GlobalApiErrorProps = {
   children: ReactNode;
-}
+};
 
 type ApiError = {
   message: string;
   status?: number;
   url?: string;
-}
+};
 
 export const GlobalApiError = ({ children }: GlobalApiErrorProps) => {
   const [error, setError] = useState<ApiError | null>(null);
