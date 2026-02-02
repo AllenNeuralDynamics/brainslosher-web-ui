@@ -1,0 +1,131 @@
+from fastapi import FastAPI, APIRouter, Request, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
+from api.config import router as config_router
+from contextlib import asynccontextmanager
+import asyncio
+from aiortc import RTCPeerConnection, RTCSessionDescription, RTCDataChannel, VideoStreamTrack
+import json
+import asyncio
+import logging
+from one_liner.client import RouterClient
+import zmq
+import zmq.asyncio
+import time
+from fractions import Fraction
+from pathlib import Path
+
+logger = logging.getLogger(__name__)
+logging.basicConfig(level=logging.INFO)
+
+router_client = RouterClient()  # instantiate router client 
+stop_event = asyncio.Event()    # event to discontinue polling
+tasks: list[asyncio.Task] = []  # async tasks running during app lifetime
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):   # lifespan function to kill tasks at end of app
+    yield
+    stop_event.set()
+    cancel_tasks(tasks)  # cancel when app shuts down
+
+
+def cancel_tasks(tasks:list[asyncio.Task]):
+    for task in tasks:
+        task.cancel()
+
+
+def configure_stream_polling(stream_name: str) -> zmq.asyncio.Poller:
+    """
+        Add stream to client and configure poller for stream
+
+        :param stream_name: name for client stream
+    """
+
+    if stream_name not in router_client.stream_client.sub_sockets.keys():
+        router_client.configure_stream(stream_name, storage_type="cache")
+    socket = router_client.stream_client.sub_sockets[stream_name]
+    poller = zmq.asyncio.Poller()
+    poller.register(socket, zmq.POLLIN)
+    return poller
+
+async def propagate_data_channel(channel: RTCDataChannel) -> None:
+    """
+        Propagate msg from client through datachannel to front end
+
+        :param channel: data channel to send message through     
+    """
+    poller = configure_stream_polling(channel.label)
+    while not stop_event.is_set():
+        if dict(await poller.poll(timeout=1000)):   # block until msgs in stream
+            timestamp, msg = router_client.get_stream(channel.label)
+            channel.send(json.dumps(msg))   
+                                
+
+# wait for offer from client
+offer_router = APIRouter()
+@offer_router.post("/offer")
+async def offer(request:Request):
+    
+    cancel_tasks(tasks) # cancel existing 
+    tasks.clear()   # clear all tasks from previous loads
+    
+    params = await request.json()
+    offer_sdp = RTCSessionDescription(sdp=params["sdp"], type=params["type"])   # create description of frontend connection
+    pc = RTCPeerConnection()                    # create a new peer connection for this client
+    await pc.setRemoteDescription(offer_sdp)    # set remote description of data channels and transceivers
+    
+    # set up handlers for connection events
+    @pc.on("connectionstatechange")
+    async def on_connectionstatechange():
+        logging.info(f"Peer connection state change: { pc.connectionState}")
+        if pc.connectionState == "failed":
+            await pc.close()
+    
+    # set up handlers for all data_channels on peer connection 
+    @pc.on("datachannel")
+    async def on_datachannel(channel):
+        tasks.append(asyncio.create_task(propagate_data_channel(channel)))    # create asyncio task to poll stream for messages
+
+    answer = await pc.createAnswer() 
+    await pc.setLocalDescription(answer)
+   
+    return {
+        "sdp":pc.localDescription.sdp,
+        "type": pc.localDescription.type
+    }
+
+
+app = FastAPI(lifespan=lifespan)
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # React dev server
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+# set up endpoints based on config mapping routes to router_client calls
+# TODO: Grab config from somewhere else
+confg = json.loads(Path("./dev/web_ui_config.json").read_text())
+for path, call_name in confg["posts"].items():
+    async def endpoint(element_id: str = None, kwargs: dict = None, call_name=call_name):
+        call_name = call_name.format(element_id=element_id)
+        try:
+            router_client.call_by_name(call_name, kwargs=kwargs)
+        except Exception as e:
+            print(e)
+            raise HTTPException(status_code=400, detail=str(e))
+    app.add_api_route(path, endpoint, methods=["POST"])
+
+for path, call_name in confg["gets"].items():
+    async def endpoint(request: Request, element_id: str = None, call_name=call_name):
+        call_name = call_name.format(element_id=element_id)
+        kwargs = dict(request.query_params)
+        try:
+            return router_client.call_by_name(call_name, kwargs=kwargs)
+        except Exception as e:
+            raise HTTPException(status_code=400, detail=str(e))
+    app.add_api_route(path, endpoint, methods=["GET"])
+
+app.include_router(config_router)
+app.include_router(offer_router)
