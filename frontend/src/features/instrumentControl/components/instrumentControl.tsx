@@ -1,11 +1,22 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
+import { useDisclosure } from "@mantine/hooks";
 import { Button, Group, Stack, NumberInput, Select } from "@mantine/core";
 import { instrumentControlApi } from "../api/instrumentControlApi.ts";
 import { useInstrumentConfigStore } from "@/stores/instrumentConfigStore.ts";
 import { useProtocolStore } from "@/stores/protocolStore.ts";
-import { useAppConfigStore } from "@/stores/appConfigStore.ts";
-import { useDataChannelStore } from "@/stores/dataChannelStore.ts";
-
+import { useInstrumentStateStore } from "@/stores/instrumentStateStore.ts";
+import { useStartTimeSore } from "@/stores/startTimeStore.ts";
+import {
+  IconAlertHexagon,
+  IconTrash,
+  IconArrowNarrowDownDashed,
+  IconArrowNarrowUpDashed,
+  IconPlayerPlay,
+  IconRotateClockwise,
+  IconPlayerPause,
+} from "@tabler/icons-react";
+import { RunSummaryModal } from "./runSummaryCheck.tsx";
+import { getEmptyJob } from "@/utils/getEmptyJob";
 
 export const InstrumentControl = () => {
   const [washFill, setWashFill] = useState<number>(11);
@@ -13,31 +24,9 @@ export const InstrumentControl = () => {
   const instConfig = useInstrumentConfigStore((state) => state.config);
   const protocol = useProtocolStore((state) => state.protocol);
   const setProtocol = useProtocolStore((state) => state.setProtocol);
-  const uiConfing = useAppConfigStore((state) => state.config);
-  const dataChannels = useDataChannelStore((state) => state.channels);
-  const [state, setState] = useState("Paused");
-  const stateChannelRef = useRef<RTCDataChannel | null>(null);
-
-
-
-  // initialize and connect instrument state dataChannel
-  useEffect(() => {
-    // add state channel
-    const stateChannel = dataChannels[`state`];
-    if (!stateChannel) return;
-    // update pos upon message
-    const handleStateMessage = (evt: MessageEvent) => {
-      const state = JSON.parse(evt.data);
-      setState(state);
-    };
-    stateChannel.addEventListener("message", handleStateMessage);
-    // create reference
-    stateChannelRef.current = stateChannel;
-
-    return () => {
-      stateChannel.removeEventListener("message", handleStateMessage);
-    };
-  }, [dataChannels]);
+  const state = useInstrumentStateStore((state) => state.state);
+  const setStartTime = useStartTimeSore((state) => state.setStartTime);
+  const [opened, { open, close }] = useDisclosure(false);
 
   useEffect(() => {
     if (instConfig && Object.keys(instConfig.selector_port_map).length > 0) {
@@ -52,21 +41,30 @@ export const InstrumentControl = () => {
       }))
     : [];
 
-  function createJobPath(): string {
-    const date = new Date()
-      .toISOString()
-      .replace(/[:.]/g, "-")
-      .replace("T", "_")
-      .replace("Z", "");
-    const path = `${uiConfing?.job_folder}${protocol.name}_${date}.yaml`;
-    return path;
-  }
-
   return (
     <Stack>
+      <RunSummaryModal
+        opened={opened}
+        onClose={close}
+        onConfirm={() => {
+          instrumentControlApi.postStart(protocol);
+          const d = new Date();
+          const formatted = d.toLocaleString(undefined, {
+            year: "numeric",
+            month: "short",
+            day: "2-digit",
+            hour: "2-digit",
+            minute: "2-digit",
+          });
+          setStartTime(formatted);
+          close();
+        }}
+      />
       <Group>
         <Button
           mt="md"
+          disabled={state == "running"}
+          leftSection={<IconArrowNarrowUpDashed />}
           color="blue"
           onClick={() => instrumentControlApi.postFill(solution, washFill)}
         >
@@ -91,42 +89,76 @@ export const InstrumentControl = () => {
           onChange={(val) => setSolution(val ?? "")}
         />
       </Group>
-      <Button color="cyan"> Drain </Button>
-      {(state == "idle" || state == null) && protocol.resume_state == null && (
+      <Group grow>
         <Button
-          color="green"
+          color="rgb(56, 142, 190)"
+          disabled={state == "running"}
+          leftSection={<IconArrowNarrowDownDashed />}
           onClick={() => {
-            const path = createJobPath();
-            instrumentControlApi.postStart(protocol, path);
+            instrumentControlApi.postDrain();
+          }}
+        >
+          Drain Chamber
+        </Button>
+        <Button
+          color="rgb(124, 108, 186)"
+          leftSection={<IconTrash />}
+          onClick={() => {
+            instrumentControlApi.postWasteEmptied(); //TODO: Add pop up to confirm
+          }}
+        >
+          Waste Emptied
+        </Button>
+      </Group>
+      {state != "running" && state != "paused" && (
+        <Button
+          color="rgb(46, 204, 113)"
+          leftSection={<IconPlayerPlay />}
+          onClick={() => {
+            open();
           }}
         >
           Start
         </Button>
       )}
-      {(state == "idle" || state == null) && protocol.resume_state != null && (
-        <Button
-          style={{ backgroundColor: "#D4A017" }}
-          onClick={() => {
-            const path = createJobPath();
-            const newProtocol = { ...protocol, resume_state: null };
-            setProtocol(newProtocol);
-            instrumentControlApi.postStart(newProtocol, path);
-          }}
-        >
-          Restart
-        </Button>
-      )}
-      {(state == "idle" || state == null) && protocol.resume_state != null && (
-        <Button
-          color="orange"
-          onClick={() => instrumentControlApi.postResume()}
-        >
-          Resume
-        </Button>
+      {state == "paused" && (
+        <>
+          <Button
+            color="rgb(230, 126, 34)"
+            leftSection={<IconRotateClockwise />}
+            onClick={() => {
+              open();
+            }}
+          >
+            Restart
+          </Button>
+          <Button
+            leftSection={<IconPlayerPlay />}
+            color="rgb(88, 204, 164)"
+            onClick={() => instrumentControlApi.postResume()}
+          >
+            Resume
+          </Button>
+          <Button
+            leftSection={<IconAlertHexagon />}
+            color="red"
+            onClick={() => {
+              instrumentControlApi.postClear();
+              setProtocol(getEmptyJob());
+              setStartTime("");
+            }}
+          >
+            Clear Current Protocol
+          </Button>
+        </>
       )}
       {state == "running" && (
-        <Button color="orange" onClick={() => instrumentControlApi.postPause()}>
-          Resume
+        <Button
+          color="rgb(241, 196, 15)"
+          onClick={() => instrumentControlApi.postPause()}
+          leftSection={<IconPlayerPause />}
+        >
+          Pause
         </Button>
       )}
     </Stack>

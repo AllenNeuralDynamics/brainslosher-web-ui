@@ -29,7 +29,7 @@ export const useProtocolSchema = (): RJSFSchema => {
             title: "Protocol Path",
           },
           accessed: {
-            type: "string",
+            type: ["string", "null"],
             format: "date-time",
             title: "Last Accessed",
           },
@@ -51,11 +51,15 @@ export const useProtocolSchema = (): RJSFSchema => {
               type: "number",
               title: "Duration (min)",
               description: "Duration in minutes of all washes in cycle.",
+              default: 1,
+              minimum: 1,
             },
             washes: {
               type: "number",
               title: "Number of washes",
               description: "Number of washes performed in cycle.",
+              default: 1,
+              minimum: 1,
             },
           },
           required: ["solution", "duration_min", "washes"],
@@ -65,9 +69,10 @@ export const useProtocolSchema = (): RJSFSchema => {
         type: "number",
         title: "Motor Speed (RPM)",
         description: "Speed of motor in rpms. Set to 0 to disable motor.",
+        default: 0,
       },
       resume_state: {
-        type: "object",
+        type: ["object", "null"],
         title: "Resume State",
         properties: {
           step: { type: "number", title: "Step" },
@@ -82,7 +87,6 @@ export const useProtocolSchema = (): RJSFSchema => {
             additionalProperties: {},
           },
         },
-        required: ["protocol", "motor_speed_rpm"],
       },
       history: {
         type: "object",
@@ -94,7 +98,7 @@ export const useProtocolSchema = (): RJSFSchema => {
             items: {
               type: "object",
               properties: {
-                timestamp: { type: "string", format: "date-time" },
+                timestamp: { type: "object" }, // Date type
                 type: {
                   type: "string",
                   enum: ["start", "end", "pause", "resume"],
@@ -137,6 +141,7 @@ export const useProtocolUiSchema = () => {
       items: {
         solution: {
           "ui:widget": "select",
+          "ui:placeholder": "Select solution",
           "ui.enumNames": valveLabels,
           "ui:options": {
             enumNames: valveLabels,

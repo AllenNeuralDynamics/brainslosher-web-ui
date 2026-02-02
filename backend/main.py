@@ -1,4 +1,4 @@
-from fastapi import FastAPI, APIRouter, Request
+from fastapi import FastAPI, APIRouter, Request, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from api.config import router as config_router
 from contextlib import asynccontextmanager
@@ -15,9 +15,9 @@ from fractions import Fraction
 from pathlib import Path
 
 logger = logging.getLogger(__name__)
+logging.basicConfig(level=logging.INFO)
 
 router_client = RouterClient()  # instantiate router client 
-print(router_client)
 stop_event = asyncio.Event()    # event to discontinue polling
 tasks: list[asyncio.Task] = []  # async tasks running during app lifetime
 
@@ -76,6 +76,7 @@ async def offer(request:Request):
     # set up handlers for connection events
     @pc.on("connectionstatechange")
     async def on_connectionstatechange():
+        logging.info(f"Peer connection state change: { pc.connectionState}")
         if pc.connectionState == "failed":
             await pc.close()
     
@@ -83,7 +84,7 @@ async def offer(request:Request):
     @pc.on("datachannel")
     async def on_datachannel(channel):
         tasks.append(asyncio.create_task(propagate_data_channel(channel)))    # create asyncio task to poll stream for messages
-    
+
     answer = await pc.createAnswer() 
     await pc.setLocalDescription(answer)
    
@@ -109,14 +110,21 @@ confg = json.loads(Path("./dev/web_ui_config.json").read_text())
 for path, call_name in confg["posts"].items():
     async def endpoint(element_id: str = None, kwargs: dict = None, call_name=call_name):
         call_name = call_name.format(element_id=element_id)
-        router_client.call_by_name(call_name, kwargs=kwargs)
+        try:
+            router_client.call_by_name(call_name, kwargs=kwargs)
+        except Exception as e:
+            print(e)
+            raise HTTPException(status_code=400, detail=str(e))
     app.add_api_route(path, endpoint, methods=["POST"])
 
 for path, call_name in confg["gets"].items():
     async def endpoint(request: Request, element_id: str = None, call_name=call_name):
         call_name = call_name.format(element_id=element_id)
         kwargs = dict(request.query_params)
-        return router_client.call_by_name(call_name, kwargs=kwargs)
+        try:
+            return router_client.call_by_name(call_name, kwargs=kwargs)
+        except Exception as e:
+            raise HTTPException(status_code=400, detail=str(e))
     app.add_api_route(path, endpoint, methods=["GET"])
 
 app.include_router(config_router)
