@@ -6,7 +6,7 @@ import { useDataChannelStore } from "@/stores/dataChannelStore.ts";
 import { negotiate } from "@/utils/webRtcConnection.tsx";
 import { MainErrorFallback } from "@/components/errors/main";
 import { queryConfig } from "@/lib/react-query";
-import { api } from "../lib/client.tsx";
+import { api } from "@/lib/client.tsx";
 import { useThemeStore } from "@/stores/themeStore";
 import { useAppConfigStore } from "@/stores/appConfigStore.ts";
 import { useInstrumentConfigStore } from "@/stores/instrumentConfigStore.ts";

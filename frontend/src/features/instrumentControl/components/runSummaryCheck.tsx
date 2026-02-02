@@ -1,6 +1,6 @@
 import { Modal, Text, Button } from "@mantine/core";
 import { useProtocolStore } from "@/stores/protocolStore.ts";
-import type { Protocol } from "../../../types/protocolType";
+import type { Protocol } from "@/types/protocolType";
 import { useInstrumentConfigStore } from "@/stores/instrumentConfigStore.ts";
 import type { InstrumentConfig } from "@/types/configTypes.tsx";
 

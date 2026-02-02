@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import type { BrainSlosherJobType } from "../types/protocolType";
+import type { BrainSlosherJobType } from "@/types/protocolType";
 import { getEmptyJob } from "@/utils/getEmptyJob";
 
 interface ProtocolStore {

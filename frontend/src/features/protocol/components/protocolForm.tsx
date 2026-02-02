@@ -1,4 +1,4 @@
-import { useRef, useEffect } from "react";
+import { useRef, useEffect, useState } from "react";
 import validator from "@rjsf/validator-ajv8";
 import Form from "@rjsf/mantine";
 import { Button, FileButton, Title, Card, Group } from "@mantine/core";
@@ -8,7 +8,7 @@ import {
 } from "../types/protocolSchema";
 import "../assets/rjsf-spacing.css";
 import { WashVolumes } from "./washVolumes";
-import { useProtocolStore } from "../../../stores/protocolStore";
+import { useProtocolStore } from "@/stores/protocolStore";
 import { useInstrumentStateStore } from "@/stores/instrumentStateStore.ts";
 import { useStartTimeSore } from "@/stores/startTimeStore.ts";
 import { getEmptyJob } from "@/utils/getEmptyJob";
@@ -24,6 +24,7 @@ export const ProtocolForm = () => {
   const state = useInstrumentStateStore((state) => state.state);
   const disabled = state == "running" || state == "paused";
   const resetRef = useRef<() => void>(null);
+  const [formKey, setFormKey] = useState(0);
 
   // update start time when protocol updates
   useEffect(() => {
@@ -111,7 +112,7 @@ export const ProtocolForm = () => {
             Protocol
           </Title>
           <Form
-            key={state} // remount whenever state changes to reflect current protocol
+            key={`${state}-${formKey}`} // remount whenever state changes or clear button is pressed to reflect current protocol
             uiSchema={useProtocolUiSchema()}
             schema={useProtocolSchema()}
             validator={validator}
@@ -141,11 +142,12 @@ export const ProtocolForm = () => {
               </FileButton>
               <Button
                 m="xs"
-                type="button"
+                type="reset"
                 onClick={() => {
                   const form = getEmptyJob();
                   setProtocol(form);
-                  formApi.postSetJob(form);
+                  setFormKey(k => k + 1);
+                  formApi.postClearJob();
                 }}
               >
                 Clear

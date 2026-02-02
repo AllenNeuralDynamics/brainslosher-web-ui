@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Container, Title, TextInput, Group } from "@mantine/core";
 import { ColorSchemeToggle } from "../ColorSchemeToggle";
 import { useInstrumentConfigStore } from "@/stores/instrumentConfigStore.ts";
-import { api } from "../../../lib/client.tsx";
+import { api } from "@/lib/client.tsx";
 
 export const Header = () => {
   const instConfig = useInstrumentConfigStore((state) => state.config);

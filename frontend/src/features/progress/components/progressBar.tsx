@@ -1,8 +1,8 @@
 import { Progress, Text, Box, Title, Card, Group, Stack } from "@mantine/core";
 import { useState, useEffect } from "react";
-import { useProtocolStore } from "../../../stores/protocolStore";
-import { useThemeStore } from "../../../stores/themeStore";
-import type { Protocol } from "../../../types/protocolType";
+import { useProtocolStore } from "@/stores/protocolStore";
+import { useThemeStore } from "@/stores/themeStore";
+import type { Protocol } from "@/types/protocolType";
 import { useStartTimeSore } from "@/stores/startTimeStore.ts";
 import { useProgressStore } from "@/stores/progressStore";
 import { useInstrumentStateStore } from "@/stores/instrumentStateStore.ts";

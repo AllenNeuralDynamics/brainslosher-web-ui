@@ -1,5 +1,5 @@
-import { api } from "../../../lib/client.tsx";
-import type { BrainSlosherJobType } from "../../../types/protocolType.tsx";
+import { api } from "@/lib/client.tsx";
+import type { BrainSlosherJobType } from "@/types/protocolType.tsx";
 
 export const instrumentControlApi = {
   postFill: (solution: string, volume_ml: number) =>
