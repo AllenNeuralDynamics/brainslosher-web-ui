@@ -1,4 +1,4 @@
-import { api } from "../../../lib/client.tsx";
+import { api } from "@/lib/client.tsx";
 
 export const washVolumeApi = {
   postFillVolume: (volume: number) => api.post(`/set_fill_volume`, { volume }),

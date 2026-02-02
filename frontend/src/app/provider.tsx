@@ -6,7 +6,7 @@ import { useDataChannelStore } from "@/stores/dataChannelStore.ts";
 import { negotiate } from "@/utils/webRtcConnection.tsx";
 import { MainErrorFallback } from "@/components/errors/main";
 import { queryConfig } from "@/lib/react-query";
-import { api } from "../lib/client.tsx";
+import { api } from "@/lib/client.tsx";
 import { useThemeStore } from "@/stores/themeStore";
 import { useAppConfigStore } from "@/stores/appConfigStore.ts";
 import { useInstrumentConfigStore } from "@/stores/instrumentConfigStore.ts";
@@ -48,10 +48,9 @@ export const AppProvider = ({ children }: AppProviderProps) => {
     async function fetchjob() {
       try {
         const job = await api.get("/get_job");
-        if (job.data){
+        if (job.data) {
           setProtocol({ ...job.data });
         }
-        
       } catch (error) {
         console.error("Error fetching protocol:", error);
       }

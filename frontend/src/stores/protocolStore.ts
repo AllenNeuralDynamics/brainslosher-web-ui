@@ -1,18 +1,6 @@
 import { create } from "zustand";
-import type { BrainSlosherJobType } from "../features/protocol/types/protocolType";
-
-const getEmptyJob = (): BrainSlosherJobType => ({
-  name: "brainslosher",
-  starting_solution: {},
-  protocol: [
-    {
-      solution: "air",
-      duration_min: 1,
-      washes: 1,
-    },
-  ],
-  motor_speed_rpm: 0,
-});
+import type { BrainSlosherJobType } from "@/types/protocolType";
+import { getEmptyJob } from "@/utils/getEmptyJob";
 
 interface ProtocolStore {
   protocol: BrainSlosherJobType;

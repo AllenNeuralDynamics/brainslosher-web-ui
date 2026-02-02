@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import { NumberInput, Stack } from "@mantine/core";
 import { useInstrumentConfigStore } from "@/stores/instrumentConfigStore.ts";
 import { washVolumeApi } from "../api/washVolumesApi";
-import { api } from "../../../lib/client";
 
 export const WashVolumes = () => {
   const instConfig = useInstrumentConfigStore((state) => state.config);
@@ -15,15 +14,6 @@ export const WashVolumes = () => {
     setWashDrain(instConfig?.drain_volume_buffer_ml);
   }, [instConfig]);
 
-  async function updateInstrumentConfig() {
-    try {
-      const instConfig = await api.get("/instrument_config");
-      setInstConfig({ ...instConfig.data });
-    } catch (error) {
-      console.error("Error fetching config:", error);
-    }
-  }
-
   return (
     <Stack>
       <NumberInput
@@ -34,10 +24,11 @@ export const WashVolumes = () => {
         onKeyDown={(e) => {
           if (e.key === "Enter") {
             e.preventDefault();
-            const val = e.currentTarget.value;
-            setWashFill(Number(val));
-            washVolumeApi.postFillVolume(Number(val));
-            updateInstrumentConfig();
+            const val = Number(e.currentTarget.value);
+            washVolumeApi.postFillVolume(val);
+            if (!instConfig) return;
+            const newConfig = { ...instConfig, fill_volume_ml: val };
+            setInstConfig(newConfig);
           }
         }}
       />
@@ -51,10 +42,11 @@ export const WashVolumes = () => {
         onKeyDown={(e) => {
           if (e.key === "Enter") {
             e.preventDefault();
-            const val = e.currentTarget.value;
-            setWashDrain(Number(val));
-            washVolumeApi.postDrainVolume(Number(val));
-            updateInstrumentConfig();
+            const val = Number(e.currentTarget.value);
+            washVolumeApi.postDrainVolume(val);
+            if (!instConfig) return;
+            const newConfig = { ...instConfig, fill_volume_ml: val };
+            setInstConfig(newConfig);
           }
         }}
       />

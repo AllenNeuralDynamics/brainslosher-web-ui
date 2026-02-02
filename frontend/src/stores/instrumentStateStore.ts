@@ -1,7 +1,7 @@
 import { create } from "zustand";
 import { useDataChannelStore } from "./dataChannelStore";
 
-type InstrumentStateStatus =
+export type InstrumentStateStatus =
   | "failed"
   | "finished"
   | "running"
