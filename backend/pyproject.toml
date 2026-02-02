@@ -6,7 +6,6 @@ readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
     "aiortc>=1.14.0",
-    "brainwasher",
     "fastapi>=0.128.0",
     "one-liner",
     "uvicorn>=0.40.0",
@@ -15,4 +14,3 @@ dependencies = [
 
 [tool.uv.sources]
 one-liner = { git = "https://github.com/AllenNeuralDynamics/one-liner.git" }
-brainwasher = { path = "../../brainwasher" }

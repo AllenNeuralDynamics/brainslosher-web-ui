@@ -22,9 +22,9 @@ export type SourceProtocol = {
 
 // TypeScript type for a single cycle
 export type Cycle = {
-  solution: string;        // Solution to use in all washes of cycle
-  duration_min: number;    // Duration in minutes
-  washes: number;          // Number of washes
+  solution: string; // Solution to use in all washes of cycle
+  duration_min: number; // Duration in minutes
+  washes: number; // Number of washes
 };
 
 // Type for the protocol (array of cycles)
@@ -36,6 +36,6 @@ export type BrainSlosherJobType = {
   source_protocol?: SourceProtocol;
   protocol: Protocol;
   motor_speed_rpm: number;
-  resume_state?: ResumeState;
+  resume_state?: ResumeState | null;
   history?: History;
 };
