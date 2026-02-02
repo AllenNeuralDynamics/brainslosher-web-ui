@@ -6,10 +6,11 @@ import { useDataChannelStore } from "@/stores/dataChannelStore.ts";
 import { negotiate } from "@/utils/webRtcConnection.tsx";
 import { MainErrorFallback } from "@/components/errors/main";
 import { queryConfig } from "@/lib/react-query";
-import { api } from "../lib/client.tsx";
+import { api } from "@/lib/client.tsx";
 import { useThemeStore } from "@/stores/themeStore";
 import { useAppConfigStore } from "@/stores/appConfigStore.ts";
 import { useInstrumentConfigStore } from "@/stores/instrumentConfigStore.ts";
+import { useProtocolStore } from "@/stores/protocolStore.ts";
 
 type AppProviderProps = {
   children: React.ReactNode;
@@ -20,6 +21,7 @@ export const AppProvider = ({ children }: AppProviderProps) => {
   const setUiConfig = useAppConfigStore((state) => state.setConfig);
   const uiConfig = useAppConfigStore((state) => state.config);
   const setInstConfig = useInstrumentConfigStore((state) => state.setConfig);
+  const setProtocol = useProtocolStore((state) => state.setProtocol);
 
   const [queryClient] = useState(
     () =>
@@ -40,6 +42,21 @@ export const AppProvider = ({ children }: AppProviderProps) => {
     }
     fetchUiConfig();
   }, [setUiConfig]);
+
+  // fetch job
+  useEffect(() => {
+    async function fetchjob() {
+      try {
+        const job = await api.get("/get_job");
+        if (job.data) {
+          setProtocol({ ...job.data });
+        }
+      } catch (error) {
+        console.error("Error fetching protocol:", error);
+      }
+    }
+    fetchjob();
+  }, [setProtocol]);
 
   // populate dataChannels
   useEffect(() => {
