@@ -6,10 +6,13 @@ import { api } from "@/lib/client.tsx";
 
 async function loadEmails() {
   const res = await fetch('/emails.txt');
-  if (!res.ok){ // skip if no file is found
-    return []
-  }
   const text = await res.text();
+
+  // skip if file doesn't exist
+  if (text.startsWith('<!DOCTYPE html>') || text.includes('<html')) {
+      return [];
+    }
+    
   return text.split('\n').map(e => e.trim()).filter(Boolean);
 }
 

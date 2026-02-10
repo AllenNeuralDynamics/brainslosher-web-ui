@@ -24,4 +24,4 @@ dist-ssr
 *.sw?
 
 # file that contains email suggestions
-public/emails.txt
+frontend/public/emails.txt
