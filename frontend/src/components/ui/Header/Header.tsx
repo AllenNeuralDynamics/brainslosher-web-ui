@@ -1,17 +1,32 @@
 import { useState, useEffect } from "react";
-import { Container, Title, TextInput, Group } from "@mantine/core";
+import { Container, Title, TextInput, Group, Autocomplete } from "@mantine/core";
 import { ColorSchemeToggle } from "../ColorSchemeToggle";
 import { useInstrumentConfigStore } from "@/stores/instrumentConfigStore.ts";
 import { api } from "@/lib/client.tsx";
 
+async function loadEmails() {
+  const res = await fetch('/emails.txt');
+  if (!res.ok){ // skip if no file is found
+    return []
+  }
+  const text = await res.text();
+  return text.split('\n').map(e => e.trim()).filter(Boolean);
+}
+
 export const Header = () => {
   const instConfig = useInstrumentConfigStore((state) => state.config);
   const [userEmail, setUserEmail] = useState<string>("");
+  const [emailSuggestions, setEmailSuggestions] = useState<Array<string>>([])
 
   useEffect(() => {
     if (!instConfig?.user_email) return;
     setUserEmail(instConfig.user_email);
   }, [instConfig?.user_email]);
+
+  useEffect(() => {
+  loadEmails().then(setEmailSuggestions);
+}, []);
+
 
   return (
     <Container
@@ -23,10 +38,11 @@ export const Header = () => {
         Brain Slosher
       </Title>
       <Group ml="auto" gap="md">
-        <TextInput
+        <Autocomplete
           label="Email"
           value={userEmail}
-          onChange={(e) => setUserEmail(e.currentTarget.value)}
+          data={emailSuggestions}
+          onChange={(e) => setUserEmail(e)}
           onKeyDown={(e) => {
             if (e.key === "Enter") {
               const email = e.currentTarget.value;
