@@ -1,5 +1,6 @@
 {
   "job_folder": "../../brain_slosher_jobs/",
+  "suggested_emails": ["micah.woodard@alleninstitute.org"],
   "data_channels": ["state", "progress", "check_job_status"],
     "gets": {
       "/instrument_config":"get_config",

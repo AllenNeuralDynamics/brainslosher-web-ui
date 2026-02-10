@@ -1,24 +1,14 @@
 import { useState, useEffect } from "react";
-import { Container, Title, TextInput, Group, Autocomplete } from "@mantine/core";
+import { Container, Title, Group, Autocomplete } from "@mantine/core";
 import { ColorSchemeToggle } from "../ColorSchemeToggle";
 import { useInstrumentConfigStore } from "@/stores/instrumentConfigStore.ts";
 import { api } from "@/lib/client.tsx";
-
-async function loadEmails() {
-  const res = await fetch('/emails.txt');
-  const text = await res.text();
-
-  // skip if file doesn't exist
-  if (text.startsWith('<!DOCTYPE html>') || text.includes('<html')) {
-      return [];
-    }
-    
-  return text.split('\n').map(e => e.trim()).filter(Boolean);
-}
+import { useAppConfigStore } from "@/stores/appConfigStore.ts";
 
 export const Header = () => {
   const instConfig = useInstrumentConfigStore((state) => state.config);
   const [userEmail, setUserEmail] = useState<string>("");
+  const uiConfig = useAppConfigStore((state) => state.config);
   const [emailSuggestions, setEmailSuggestions] = useState<Array<string>>([])
 
   useEffect(() => {
@@ -27,8 +17,9 @@ export const Header = () => {
   }, [instConfig?.user_email]);
 
   useEffect(() => {
-  loadEmails().then(setEmailSuggestions);
-}, []);
+    if (!uiConfig?.suggested_emails) return;
+    setEmailSuggestions(uiConfig.suggested_emails);
+  }, [uiConfig]);
 
 
   return (

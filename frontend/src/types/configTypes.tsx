@@ -1,5 +1,6 @@
 export type AppConfig = {
   data_channels: string[];
+  suggested_emails: string[];
   gets: Record<string, string>;
   posts: Record<string, string>;
 };

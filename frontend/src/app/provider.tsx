@@ -34,14 +34,14 @@ export const AppProvider = ({ children }: AppProviderProps) => {
   useEffect(() => {
     async function fetchUiConfig() {
       try {
-        const uiConfig = await api.get("/ui_config");
-        setUiConfig({ ...uiConfig.data });
+        const config = await api.get("/ui_config");
+        setUiConfig({ ...config.data });
       } catch (error) {
         console.error("Error fetching config:", error);
       }
     }
     fetchUiConfig();
-  }, [setUiConfig]);
+  }, []);
 
   // fetch job
   useEffect(() => {
