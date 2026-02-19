@@ -13,5 +13,6 @@ router = APIRouter()
 @router.get("/ui_config")
 def get_config():
     # TODO: Grab config from somewhere else
+    logger.debug("Grabbing config.")
     config_text = UI_CONFIG_PATH.read_text()
     return json.loads(config_text)
