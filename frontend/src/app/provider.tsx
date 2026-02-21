@@ -35,6 +35,7 @@ export const AppProvider = ({ children }: AppProviderProps) => {
     async function fetchUiConfig() {
       try {
         const uiConfig = await api.get("/ui_config");
+        console.log(uiConfig.data)
         setUiConfig({ ...uiConfig.data });
       } catch (error) {
         console.error("Error fetching config:", error);

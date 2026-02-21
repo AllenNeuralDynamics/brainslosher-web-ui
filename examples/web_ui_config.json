@@ -1,4 +1,5 @@
 {
+  "port":8000,
   "job_folder": "../../brain_slosher_jobs/",
   "data_channels": ["state", "progress", "check_job_status"],
     "gets": {
