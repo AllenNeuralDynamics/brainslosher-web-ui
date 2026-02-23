@@ -39,9 +39,9 @@ yarn install
 uv run bin/brainslosher_main.py --config path_to_config 
 ```
 
-2. Launch FastAPI backend. Pass `--dev` to enable development mode which requires running the Vite dev server separately. Without `--dev` the app will serve the static frontend files from `frontend/dist`.
+2. Launch FastAPI backend. Pass `--dev` to enable development mode which requires running the Vite dev server separately. Without `--dev` the app will serve the static frontend files from input path. To build static files at ../frontend/dist, run `npm run build` in frontend folder.
 ```bash
-uv run src/main.py --config path_to_config [--dev] [--log_level INFO|DEBUG]
+uv run src/main.py --config path_to_config [--dev] [--log_level INFO|DEBUG] [--static_files ../frontend/dist]
 ```
 
 3. **Dev mode only** — start the Vite dev server in a separate terminal:
@@ -50,7 +50,8 @@ cd frontend
 npm run dev
 ```
 
-In dev mode the frontend is served by Vite on `http://localhost:5173` and API calls are proxied to `http://localhost:8000`. In production mode the frontend is served directly by FastAPI on `http://localhost:8000`.
+In dev mode the frontend is served by Vite on `http://localhost:5173` and API calls are proxied to the FastAPI backend. In production mode the frontend is served directly by FastAPI. The backend port is configured in the config file and defaults to `8000`.
+
 # Project Structure
 ---
 
