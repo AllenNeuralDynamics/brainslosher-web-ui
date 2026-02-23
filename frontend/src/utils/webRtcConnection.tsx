@@ -32,7 +32,7 @@ export async function negotiate(pc: RTCPeerConnection) {
     throw new Error("PeerConnection localDescription is not set yet");
   }
 
-  const response = await fetch(`/offer`, {
+  const response = await fetch(`/api/offer`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({

@@ -24,10 +24,10 @@ jobs:
       - name: Build React
         run: npm run build
 
-      - name: Create tarball
-        run: tar -czf dist.tar.gz dist
+      - name: Zip build output
+        run: zip -r ui.zip dist/
 
       - name: Upload dist to release
         uses: softprops/action-gh-release@v2
         with:
-          files: dist.tar.gz
+          files: dist/ui.zip
