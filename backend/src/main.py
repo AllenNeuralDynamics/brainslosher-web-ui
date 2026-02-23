@@ -1,4 +1,4 @@
-import argparse
+
 import asyncio
 import json
 import logging
@@ -12,8 +12,7 @@ from aiortc import RTCPeerConnection, RTCSessionDescription, RTCDataChannel
 from contextlib import asynccontextmanager
 from one_liner.client import RouterClient
 from brainslosher_web_ui_config_model import BrainslosherWebUiConfig
-
-asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
+import argparse
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO)
@@ -46,12 +45,11 @@ def create_app(config: BrainslosherWebUiConfig) -> FastAPI:
         allow_headers=["*"],
     )
     
-    router_client = RouterClient()  # instantiate router client 
+    router_client = RouterClient(**config.router_client_kwargs.model_dump())  # instantiate router client 
 
     def configure_stream_polling(stream_name: str) -> zmq.asyncio.Poller:
         """Add stream to client and configure poller for stream"""
         if stream_name not in router_client.stream_client.sub_sockets.keys():
-            print(stream_name)
             router_client.configure_stream(stream_name, storage_type="cache")
         socket = router_client.stream_client.sub_sockets[stream_name]
         poller = zmq.asyncio.Poller()
@@ -64,10 +62,9 @@ def create_app(config: BrainslosherWebUiConfig) -> FastAPI:
         poller = configure_stream_polling(channel.label)
         while not stop_event.is_set():
             if dict(await poller.poll(timeout=1000)):
-                print("message!")
                 timestamp, msg = router_client.get_stream(channel.label)
-                print("data")
                 channel.send(json.dumps(msg))
+
 
 
     router = APIRouter(prefix="/api")   
@@ -91,7 +88,6 @@ def create_app(config: BrainslosherWebUiConfig) -> FastAPI:
 
         @pc.on("datachannel")
         async def on_datachannel(channel):
-            print(channel)
             tasks.append(asyncio.create_task(propagate_data_channel(channel)))
 
         answer = await pc.createAnswer()

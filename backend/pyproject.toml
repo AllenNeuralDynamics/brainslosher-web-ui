@@ -8,6 +8,7 @@ dependencies = [
     "aiortc>=1.14.0",
     "fastapi>=0.128.0",
     "one-liner",
+    "tornado>=6.5.4",
     "uvicorn>=0.40.0",
     "zmq>=0.0.0",
 ]
