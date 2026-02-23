@@ -35,24 +35,22 @@ yarn install
 ---
 
 1. Start brainslosher in separate process. This can be found in [brainwasher/bin/brainslosher_main.py](https://github.com/AllenNeuralDynamics/brainwasher/blob/feat-email-errors/bin/brainslosher_main.py)
-
 ```bash
 uv run bin/brainslosher_main.py --config path_to_config 
 ```
 
-2. Launch FastAPI app backend with uvicorn in separate process. Web app will be hosted on 8000 so specify 8000
-
+2. Launch FastAPI backend. Pass `--dev` to enable development mode which requires running the Vite dev server separately. Without `--dev` the app will serve the static frontend files from `frontend/dist`.
 ```bash
-uv run uvicorn backend.main:app --host 0.0.0.0 --port 8000 --reload
+uv run src/main.py --config path_to_config [--dev] [--log_level INFO|DEBUG]
 ```
 
-3. Start web ui
-
+3. **Dev mode only** — start the Vite dev server in a separate terminal:
 ```bash
 cd frontend
 npm run dev
 ```
 
+In dev mode the frontend is served by Vite on `http://localhost:5173` and API calls are proxied to `http://localhost:8000`. In production mode the frontend is served directly by FastAPI on `http://localhost:8000`.
 # Project Structure
 ---
 
