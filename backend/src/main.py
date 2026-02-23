@@ -130,8 +130,8 @@ if __name__ == "__main__":
 
     parser = argparse.ArgumentParser()
     parser.add_argument("--config", type=str, required=True)
-    parser.add_argument("--log_level", type=str, default="INFO", choices=["INFO", "DEBUG"])
-    parser.add_argument("--static_files", type=str, default="../frontend/dist")
+    parser.add_argument("--log-level", type=str, default="INFO", choices=["INFO", "DEBUG"])
+    parser.add_argument("--static-files", type=str, default="../frontend/dist")
     parser.add_argument("--dev", action="store_true", default=False)
 
     args = parser.parse_args()
