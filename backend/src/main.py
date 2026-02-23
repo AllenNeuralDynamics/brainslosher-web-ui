@@ -11,7 +11,9 @@ from fastapi.middleware.cors import CORSMiddleware
 from aiortc import RTCPeerConnection, RTCSessionDescription, RTCDataChannel
 from contextlib import asynccontextmanager
 from one_liner.client import RouterClient
-from .brainslosher_web_ui_config_model import BrainslosherWebUiConfig
+from brainslosher_web_ui_config_model import BrainslosherWebUiConfig
+
+asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO)
@@ -44,11 +46,12 @@ def create_app(config: BrainslosherWebUiConfig) -> FastAPI:
         allow_headers=["*"],
     )
     
-    router_client = RouterClient(config.router_client_kwargs)  # instantiate router client 
+    router_client = RouterClient()  # instantiate router client 
 
     def configure_stream_polling(stream_name: str) -> zmq.asyncio.Poller:
         """Add stream to client and configure poller for stream"""
         if stream_name not in router_client.stream_client.sub_sockets.keys():
+            print(stream_name)
             router_client.configure_stream(stream_name, storage_type="cache")
         socket = router_client.stream_client.sub_sockets[stream_name]
         poller = zmq.asyncio.Poller()
@@ -61,7 +64,9 @@ def create_app(config: BrainslosherWebUiConfig) -> FastAPI:
         poller = configure_stream_polling(channel.label)
         while not stop_event.is_set():
             if dict(await poller.poll(timeout=1000)):
+                print("message!")
                 timestamp, msg = router_client.get_stream(channel.label)
+                print("data")
                 channel.send(json.dumps(msg))
 
 
@@ -86,6 +91,7 @@ def create_app(config: BrainslosherWebUiConfig) -> FastAPI:
 
         @pc.on("datachannel")
         async def on_datachannel(channel):
+            print(channel)
             tasks.append(asyncio.create_task(propagate_data_channel(channel)))
 
         answer = await pc.createAnswer()
@@ -144,12 +150,11 @@ if __name__ == "__main__":
         from fastapi.staticfiles import StaticFiles
         from fastapi.responses import FileResponse
 
-        ui_dir = Path("ui/dist")
+        ui_dir = Path("../frontend/dist")
         app.mount("/assets", StaticFiles(directory=ui_dir / "assets"), name="assets")
 
         @app.get("/{full_path:path}")
         async def serve_frontend(full_path: str):
             return FileResponse(ui_dir / "index.html")
-    
-    else:
-        uvicorn.run(app, host="0.0.0.0", port=config.port, log_level=args.log_level.lower())
+        
+    uvicorn.run(app, port=config.port, log_level=args.log_level.lower())

@@ -7,6 +7,7 @@ type ProgressState = {
 };
 
 export const useProgressStore = create<ProgressState>((set) => {
+  console.log("hello")
   let currentListener: ((evt: MessageEvent) => void) | null = null;
 
   const attachChannelListener = (channel: RTCDataChannel) => {
@@ -17,6 +18,7 @@ export const useProgressStore = create<ProgressState>((set) => {
     currentListener = (evt: MessageEvent) => {
       try {
         const parsed = JSON.parse(evt.data);
+        console.log("progress", parsed)
         if (typeof parsed === "number") {
           set({ progress: parsed });
         } else {
