@@ -30,7 +30,8 @@ jobs:
       run: uv run ruff check
     - name: Type check with mypy 
       run: |
-        uv run mypy src/mypackage --strict
+        cd backend/src
+        uv run mypy main.py --strict
 
   # Job 2: Build Documentation for Pushes to Main
   build-docs:

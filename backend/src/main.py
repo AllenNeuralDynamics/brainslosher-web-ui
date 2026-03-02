@@ -1,8 +1,8 @@
-
 import asyncio
 import json
 import logging
 from pathlib import Path
+from typing import Any, Dict, Optional, List
 
 import zmq
 import zmq.asyncio
@@ -17,15 +17,15 @@ import argparse
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO)
 
-stop_event = asyncio.Event()    # event to discontinue polling
-tasks: list[asyncio.Task] = []  # async tasks running during app lifetime
+stop_event: asyncio.Event = asyncio.Event()    # event to discontinue polling
+tasks: List[asyncio.Task[Any]] = []           # async tasks running during app lifetime
 
-def cancel_tasks(tasks: list[asyncio.Task]):
-        for task in tasks:
-            task.cancel()
+def cancel_tasks(tasks: List[asyncio.Task[Any]]) -> None:
+    for task in tasks:
+        task.cancel()
 
 @asynccontextmanager
-async def lifespan(app: FastAPI):
+async def lifespan(app: FastAPI) -> Any:
     """Lifespan context: clean up tasks on shutdown"""
     yield
     stop_event.set()
@@ -45,17 +45,16 @@ def create_app(config: BrainslosherWebUiConfig) -> FastAPI:
         allow_headers=["*"],
     )
     
-    router_client = RouterClient(**config.router_client_kwargs.model_dump())  # instantiate router client 
+    router_client: RouterClient = RouterClient(**config.router_client_kwargs.model_dump())
 
     def configure_stream_polling(stream_name: str) -> zmq.asyncio.Poller:
         """Add stream to client and configure poller for stream"""
-        if stream_name not in router_client.stream_client.sub_sockets.keys():
+        if stream_name not in router_client.stream_client.sub_sockets:
             router_client.configure_stream(stream_name, storage_type="cache")
         socket = router_client.stream_client.sub_sockets[stream_name]
         poller = zmq.asyncio.Poller()
         poller.register(socket, zmq.POLLIN)
         return poller
-
 
     async def propagate_data_channel(channel: RTCDataChannel) -> None:
         """Propagate messages from client through data channel"""
@@ -65,13 +64,11 @@ def create_app(config: BrainslosherWebUiConfig) -> FastAPI:
                 timestamp, msg = router_client.get_stream(channel.label)
                 channel.send(json.dumps(msg))
 
-
-
     router = APIRouter(prefix="/api")   
 
     # webrtc offer endpoint
     @router.post("/offer")
-    async def offer(request: Request):
+    async def offer(request: Request) -> Dict[str, str]:
         cancel_tasks(tasks)
         tasks.clear()
 
@@ -81,13 +78,13 @@ def create_app(config: BrainslosherWebUiConfig) -> FastAPI:
         await pc.setRemoteDescription(offer_sdp)
 
         @pc.on("connectionstatechange")
-        async def on_connectionstatechange():
+        async def on_connectionstatechange() -> None:
             logging.info(f"Peer connection state change: {pc.connectionState}")
             if pc.connectionState == "failed":
                 await pc.close()
 
         @pc.on("datachannel")
-        async def on_datachannel(channel):
+        async def on_datachannel(channel: RTCDataChannel) -> None:
             tasks.append(asyncio.create_task(propagate_data_channel(channel)))
 
         answer = await pc.createAnswer()
@@ -97,29 +94,35 @@ def create_app(config: BrainslosherWebUiConfig) -> FastAPI:
 
     # ui config endpoint
     @router.get("/ui_config")
-    async def get_config():
-        return config
+    async def get_config() -> Dict[str, Any]:
+        return config.dict()
 
-    # dynamic post routes from config
-    for path, call_name in config.posts.items():
-        async def endpoint(element_id: str = None, kwargs: dict = None, call_name=call_name):
+    # Factory function for POST endpoints
+    def make_post_endpoint(call_name: str) -> Any:
+        async def endpoint(element_id: Optional[str] = None, kwargs: Optional[Dict[str, Any]] = None) -> Any:
             call_name_formatted = call_name.format(element_id=element_id)
             try:
                 router_client.call_by_name(call_name_formatted, kwargs=kwargs)
             except Exception as e:
                 raise HTTPException(status_code=400, detail=str(e))
-        router.add_api_route(path, endpoint, methods=["POST"])
+        return endpoint
 
-    # dynamic get routes from config
-    for path, call_name in config.gets.items():
-        async def endpoint(request: Request, element_id: str = None, call_name=call_name):
+    # Factory function for GET endpoints
+    def make_get_endpoint(call_name: str) -> Any:
+        async def endpoint(request: Request, element_id: Optional[str] = None) -> Any:
             call_name_formatted = call_name.format(element_id=element_id)
-            kwargs = dict(request.query_params)
+            kwargs: Dict[str, Any] = dict(request.query_params)
             try:
                 return router_client.call_by_name(call_name_formatted, kwargs=kwargs)
             except Exception as e:
                 raise HTTPException(status_code=400, detail=str(e))
-        router.add_api_route(path, endpoint, methods=["GET"])
+        return endpoint
+
+    for path, call_name in config.posts.items():
+        router.add_api_route(path, make_post_endpoint(call_name), methods=["POST"])
+
+    for path, call_name in config.gets.items():
+        router.add_api_route(path, make_get_endpoint(call_name), methods=["GET"])
 
     app.include_router(router)
     return app
@@ -139,7 +142,7 @@ if __name__ == "__main__":
     logging.getLogger().setLevel(args.log_level.upper())
 
     with open(args.config) as f:
-        config = BrainslosherWebUiConfig(**json.load(f))
+        config: BrainslosherWebUiConfig = BrainslosherWebUiConfig(**json.load(f))
 
     app = create_app(config)
 
@@ -151,7 +154,7 @@ if __name__ == "__main__":
         app.mount("/assets", StaticFiles(directory=ui_dir / "assets"), name="assets")
 
         @app.get("/{full_path:path}")
-        async def serve_frontend(full_path: str):
+        async def serve_frontend(full_path: str) -> FileResponse:
             return FileResponse(ui_dir / "index.html")
         
     uvicorn.run(app, port=config.port, log_level=args.log_level.lower())

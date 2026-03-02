@@ -12,6 +12,15 @@ dependencies = [
     "uvicorn>=0.40.0",
     "zmq>=0.0.0",
 ]
+[tool.mypy]
+python_version = "3.12"
+strict = true
+ignore_missing_imports = true
+no_implicit_optional = true
+mypy_path = "backend/src"
 
+[[tool.mypy.overrides]]
+module = "main"
+disallow_untyped_defs = true
 [tool.uv.sources]
 one-liner = { git = "https://github.com/AllenNeuralDynamics/one-liner.git" }
