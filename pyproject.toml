@@ -13,3 +13,5 @@ dependencies = [
     "zmq>=0.0.0",
 ]
 
+[tool.uv.sources]
+one-liner = { git = "https://github.com/AllenNeuralDynamics/one-liner" }
