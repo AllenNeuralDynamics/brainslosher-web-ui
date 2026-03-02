@@ -6,7 +6,7 @@ on:
       - dev
 jobs:
   test-lint-and-type-check:
-    uses: AllenNeuralDynamics/aind-python-library-template/.github/workflows/test_lint_type.yml@main
+    uses: ./.github/workflows/test_lint_type.yml
   tag:
     runs-on: self-hosted-good 
     needs: test-lint-and-type-check
@@ -50,3 +50,4 @@ jobs:
         run: uv build
       - name: Publish Project to eng-tools devpi
         run: uv publish --publish-url http://eng-tools:3141/aibs/packages --username aibs --password aibs
+
