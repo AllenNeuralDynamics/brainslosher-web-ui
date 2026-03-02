@@ -11,7 +11,7 @@ from os.path import abspath, dirname
 from pathlib import Path
 
 project_root = Path(__file__).resolve().parents[2]
-src_path = project_root / "src"
+src_path = project_root / "backend" / "src"
 sys.path.insert(0, str(src_path))
 
 from backend.src import __version__ as package_version
