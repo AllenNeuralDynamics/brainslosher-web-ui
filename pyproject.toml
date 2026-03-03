@@ -1,6 +1,6 @@
 [project]
 name = "brainsslosher_web_ui"
-version = "0.0.1"
+version = "0.0.1.dev0"
 description = "FastApi layer for React app."
 readme = "README.md"
 requires-python = ">=3.12"
