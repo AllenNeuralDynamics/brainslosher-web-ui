@@ -9,22 +9,18 @@ jobs:
   tag-and-release:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Bump version and push tag
-        id: tag_version
-        uses: mathieudutour/github-tag-action@v6.2
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          append_to_pre_release_tag: 'dev'
-          pre_release_branches: dev
+      - name: Get version from pyproject.toml
+        id: get_version
+        run: |
+          VERSION=$(grep '^version' pyproject.toml | head -1 | sed 's/version = "\(.*\)"/\1/')
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
 
-      - name: Install UV
-        uses: astral-sh/setup-uv@v5
-
-      - name: Update version in pyproject.toml
-        run: uvx --from=toml-cli toml set --toml-path=pyproject.toml project.version ${{ steps.tag_version.outputs.new_version }}
+      - name: Create tag
+        run: |
+          git tag v${{ steps.get_version.outputs.version }}
+          git push origin v${{ steps.get_version.outputs.version }}
 
       - name: Setup Node
         uses: actions/setup-node@v4
@@ -42,15 +38,17 @@ jobs:
       - name: Copy static files into package
         run: cp -r frontend/dist/. src/brainslosher_web_ui/static/
 
+      - name: Install UV
+        uses: astral-sh/setup-uv@v5
+
       - name: Build wheel
         run: uv build --wheel
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: ${{ steps.tag_version.outputs.new_tag }}
-          name: ${{ steps.tag_version.outputs.new_tag }}
-          body: ${{ steps.tag_version.outputs.changelog }}
+          tag_name: v${{ steps.get_version.outputs.version }}
+          name: v${{ steps.get_version.outputs.version }}
           prerelease: ${{ github.ref == 'refs/heads/dev' }}
           files: dist/*.whl
         env:
