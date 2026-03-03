@@ -18,5 +18,14 @@ dev = [
     "ruff",
 ]
 
+[tool.ruff]
+line-length = 120
+target-version = 'py311'
+
+[tool.ruff.lint]
+extend-select = ['Q', 'RUF100', 'C90', 'I']
+extend-ignore = []
+mccabe = { max-complexity = 19 }
+
 [tool.uv.sources]
 one-liner = { git = "https://github.com/AllenNeuralDynamics/one-liner" }
