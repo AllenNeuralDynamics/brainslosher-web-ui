@@ -17,6 +17,9 @@ dependencies = [
     "zmq>=0.0.0",
 ]
 
+[project.scripts]
+brainslosher_web_ui= "brainslosher_web_ui.main:main"
+
 [dependency-groups]
 dev = [
     "ruff",
