@@ -29,7 +29,7 @@ export const Header = () => {
       className="flex justify-between p-2 mb-[1rem]"
     >
       <Title order={1} style={{ fontWeight: 700 }}>
-        Brain Slosher
+        {instConfig?.instrument_name ?? "BrainSlosher"}
       </Title>
       <Group ml="auto" gap="md">
         <Autocomplete

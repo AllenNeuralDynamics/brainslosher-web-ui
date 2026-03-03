@@ -13,4 +13,5 @@ export type InstrumentConfig = {
   drain_volume_buffer_ml: number;
   fill_volume_ml: number;
   user_email: string | null;
+  instrument_name: string | null
 };

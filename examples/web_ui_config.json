@@ -1,4 +1,10 @@
 {
+  "router_client_kwargs": {
+    "interface":"localhost",
+    "rpc_port":"5555",
+    "broadcast_port": "5556"
+  },
+  "port":8000,
   "job_folder": "../../brain_slosher_jobs/",
   "suggested_emails": ["micah.woodard@alleninstitute.org"],
   "data_channels": ["state", "progress", "check_job_status"],
