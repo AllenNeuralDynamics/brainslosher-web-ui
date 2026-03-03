@@ -15,6 +15,7 @@ from one_liner.client import RouterClient
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO)
 
+
 @asynccontextmanager
 async def lifespan(app: FastAPI) -> Any:
     """Lifespan context: clean up tasks on shutdown"""
@@ -35,7 +36,7 @@ def create_app(config: BrainslosherWebUiConfig) -> FastAPI:
         allow_methods=["*"],
         allow_headers=["*"],
     )
-    
+
     router_client: RouterClient = RouterClient(**config.router_client_kwargs.model_dump())
     app.include_router(make_router(config, router_client))
 
@@ -70,5 +71,5 @@ if __name__ == "__main__":
         @app.get("/{full_path:path}")
         async def serve_frontend(full_path: str) -> FileResponse:
             return FileResponse(ui_dir / "index.html")
-        
+
     uvicorn.run(app, port=config.port, log_level=args.log_level.lower())

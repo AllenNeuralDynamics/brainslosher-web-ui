@@ -13,10 +13,12 @@ logger = logging.getLogger(__name__)
 stop_event: asyncio.Event = asyncio.Event()
 tasks: list[asyncio.Task[Any]] = []
 
+
 def cancel_tasks() -> None:
     for task in tasks:
         task.cancel()
     tasks.clear()
+
 
 def get_stream_poller(client: RouterClient, stream_name: str) -> zmq.asyncio.Poller:
     if stream_name not in client.stream_client.sub_sockets:

@@ -4,11 +4,13 @@ from pydantic import BaseModel, Field
 
 Protocol = Literal["tcp", "inproc", "ipc", "ws", "wss"]
 
+
 class RouterClientKwargs(BaseModel):
     protocol: Protocol = Field(default="tcp")
     interface: str = Field(default="localhost")
     rpc_port: str = Field(default="5555")
     broadcast_port: str = Field(default="5556")
+
 
 class BrainslosherWebUiConfig(BaseModel):
     router_client_kwargs: RouterClientKwargs = Field(default_factory=RouterClientKwargs)

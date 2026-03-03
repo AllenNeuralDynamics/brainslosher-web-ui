@@ -19,6 +19,7 @@ def make_router(config: BrainslosherWebUiConfig, client: RouterClient) -> APIRou
         return config.model_dump()
 
     for path, call_name in config.gets.items():
+
         def make_get(cn: str = call_name) -> Any:
             async def endpoint(request: Request, element_id: str | None = None) -> Any:
                 try:
@@ -28,10 +29,13 @@ def make_router(config: BrainslosherWebUiConfig, client: RouterClient) -> APIRou
                     )
                 except Exception as e:
                     raise HTTPException(status_code=400, detail=str(e))
+
             return endpoint
+
         router.add_api_route(path, make_get(), methods=["GET"])
 
     for path, call_name in config.posts.items():
+
         def make_post(cn: str = call_name) -> Any:
             async def endpoint(element_id: str | None = None, kwargs: dict[str, Any] | None = None) -> Any:
                 try:
@@ -41,7 +45,9 @@ def make_router(config: BrainslosherWebUiConfig, client: RouterClient) -> APIRou
                     )
                 except Exception as e:
                     raise HTTPException(status_code=400, detail=str(e))
+
             return endpoint
+
         router.add_api_route(path, make_post(), methods=["POST"])
 
     return router
