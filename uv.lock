@@ -108,9 +108,9 @@ wheels = [
 ]
 
 [[package]]
-name = "brainsslosher-web-ui"
-version = "0.0.1"
-source = { virtual = "." }
+name = "brainslosher-web-ui"
+version = "0.0.1.dev0"
+source = { editable = "." }
 dependencies = [
     { name = "aiortc" },
     { name = "fastapi" },
