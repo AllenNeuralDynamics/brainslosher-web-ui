@@ -5,12 +5,13 @@ from contextlib import asynccontextmanager
 from pathlib import Path
 from typing import Any
 
-from api.routes import make_router
-from api.webrtc import cancel_tasks, stop_event
-from brainslosher_web_ui_config_model import BrainslosherWebUiConfig
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from one_liner.client import RouterClient
+
+from .api.routes import make_router
+from .api.webrtc import cancel_tasks, stop_event
+from .brainslosher_web_ui_config_model import BrainslosherWebUiConfig
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO)
@@ -43,7 +44,7 @@ def create_app(config: BrainslosherWebUiConfig) -> FastAPI:
     return app
 
 
-if __name__ == "__main__":
+def main():
     import uvicorn
 
     parser = argparse.ArgumentParser()
@@ -73,3 +74,7 @@ if __name__ == "__main__":
             return FileResponse(ui_dir / "index.html")
 
     uvicorn.run(app, port=config.port, log_level=args.log_level.lower())
+
+
+if __name__ == "__main__":
+    main()
