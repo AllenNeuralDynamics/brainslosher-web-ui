@@ -39,9 +39,9 @@ yarn install
 uv run bin/brainslosher_main.py --config path_to_config 
 ```
 
-2. Launch FastAPI server. Pass `--dev` to enable development mode which requires running the Vite dev server separately. Without `--dev` the app will serve the static frontend files from input path. To build static files at ../frontend/dist, run `npm run build` in frontend folder.
+2. Launch FastAPI server. Pass `--dev` to enable development mode which requires running the Vite dev server separately. Without `--dev` the app will serve the static frontend files from input path. To build static files at src/brainslosher_web_ui/dist, run `npm run build` in frontend folder.
 ```bash
-uv run src/main.py --config path_to_config [--dev] [--log_level INFO|DEBUG] [--static_files ../frontend/dist]
+uv run src/main.py --config path_to_config [--dev] [--log_level INFO|DEBUG] [--static_files src/brainslosher_web_ui/dist]
 ```
 
 3. **Dev mode only** — start the Vite dev server in a separate terminal:
