@@ -2,6 +2,7 @@ import argparse
 import json
 import logging
 from contextlib import asynccontextmanager
+from importlib.resources import files
 from pathlib import Path
 from typing import Any
 
@@ -12,9 +13,9 @@ from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 from one_liner.client import RouterClient
 
-from .api.routes import make_router
-from .api.webrtc import cancel_tasks, stop_event
-from .brainslosher_web_ui_config_model import BrainslosherWebUiConfig
+from brainslosher_web_ui.api.routes import make_router
+from brainslosher_web_ui.api.webrtc import cancel_tasks, stop_event
+from brainslosher_web_ui.brainslosher_web_ui_config_model import BrainslosherWebUiConfig
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO)
@@ -52,7 +53,6 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--config", type=str, required=True)
     parser.add_argument("--log-level", type=str, default="INFO", choices=["INFO", "DEBUG"])
-    parser.add_argument("--static-files", type=str, default="../frontend/dist")
     parser.add_argument("--dev", action="store_true", default=False)
 
     args = parser.parse_args()
@@ -65,7 +65,8 @@ def main():
     app = create_app(config)
 
     if not args.dev:
-        ui_dir = Path(args.static_files)
+        static_path = files("brainslosher_web_ui") / "dist"
+        ui_dir = Path(static_path)
         app.mount("/assets", StaticFiles(directory=ui_dir / "assets"), name="assets")
 
         @app.get("/{full_path:path}")
