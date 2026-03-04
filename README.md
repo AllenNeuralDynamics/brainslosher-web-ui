@@ -19,7 +19,7 @@ React Web app built to control the brainslosher instrument. Still in review and 
 
 1. **Install server dependencies:**
 ```bash
-cd sever
+cd server
 uv sync
 ```
 
@@ -58,6 +58,10 @@ In dev mode the frontend is served by Vite on `http://localhost:5173` and API ca
 ```plaintext
 brainslosher-web-ui/ (feat-details)
 ├── server/
+    └── src/
+        └── brainslosher-web-ui/
+            └── main.py/
+
 └── frontend/
     └── features/
         ├── instrumentControl/

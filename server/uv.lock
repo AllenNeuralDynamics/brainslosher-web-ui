@@ -109,7 +109,7 @@ wheels = [
 
 [[package]]
 name = "brainslosher-web-ui"
-version = "0.0.1.dev0"
+version = "0.0.1"
 source = { editable = "." }
 dependencies = [
     { name = "aiortc" },

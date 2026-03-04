@@ -18,6 +18,6 @@ export default defineConfig({
   
 },
 build: {
-    outDir: '../src/brainslosher_web_ui/dist', 
+    outDir: '../server/src/brainslosher_web_ui/dist', 
   },
 });

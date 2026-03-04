@@ -9,7 +9,7 @@ export const Header = () => {
   const instConfig = useInstrumentConfigStore((state) => state.config);
   const [userEmail, setUserEmail] = useState<string>("");
   const uiConfig = useAppConfigStore((state) => state.config);
-  const [emailSuggestions, setEmailSuggestions] = useState<Array<string>>([])
+  const [emailSuggestions, setEmailSuggestions] = useState<Array<string>>([]);
 
   useEffect(() => {
     if (!instConfig?.user_email) return;
@@ -20,7 +20,6 @@ export const Header = () => {
     if (!uiConfig?.suggested_emails) return;
     setEmailSuggestions(uiConfig.suggested_emails);
   }, [uiConfig]);
-
 
   return (
     <Container

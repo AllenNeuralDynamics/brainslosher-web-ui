@@ -5,8 +5,11 @@ from contextlib import asynccontextmanager
 from pathlib import Path
 from typing import Any
 
+import uvicorn
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import FileResponse
+from fastapi.staticfiles import StaticFiles
 from one_liner.client import RouterClient
 
 from .api.routes import make_router
@@ -45,8 +48,7 @@ def create_app(config: BrainslosherWebUiConfig) -> FastAPI:
 
 
 def main():
-    import uvicorn
-
+    
     parser = argparse.ArgumentParser()
     parser.add_argument("--config", type=str, required=True)
     parser.add_argument("--log-level", type=str, default="INFO", choices=["INFO", "DEBUG"])
@@ -63,9 +65,7 @@ def main():
     app = create_app(config)
 
     if not args.dev:
-        from fastapi.responses import FileResponse
-        from fastapi.staticfiles import StaticFiles
-
+        
         ui_dir = Path(args.static_files)
         app.mount("/assets", StaticFiles(directory=ui_dir / "assets"), name="assets")
 
