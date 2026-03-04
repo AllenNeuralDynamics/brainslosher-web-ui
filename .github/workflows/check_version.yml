@@ -14,6 +14,7 @@ jobs:
 
       - name: Get version from pyproject.toml
         id: get_version
+        working-directory: server
         run: |
           VERSION=$(grep '^version' pyproject.toml | head -1 | sed 's/version = "\(.*\)"/\1/')
           echo "version=$VERSION" >> $GITHUB_OUTPUT
