@@ -39,6 +39,7 @@ jobs:
         uses: astral-sh/setup-uv@v5
 
       - name: Build wheel
+        working-directory: server
         run: uv build --wheel
 
       - name: Create GitHub Release

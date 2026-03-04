@@ -18,12 +18,15 @@ jobs:
           enable-cache: true
 
       - name: Install python dependencies
+        working-directory: server
         run: uv sync
 
       - name: Run ruff format check
+        working-directory: server
         run: uv run ruff format --check
 
       - name: Run ruff check
+        working-directory: server
         run: uv run ruff check
 
   # Job 2: Build Documentation for Pushes to Main
