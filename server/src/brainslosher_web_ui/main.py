@@ -48,7 +48,7 @@ def create_app(config: BrainslosherWebUiConfig) -> FastAPI:
 
 
 def main():
-    
+
     parser = argparse.ArgumentParser()
     parser.add_argument("--config", type=str, required=True)
     parser.add_argument("--log-level", type=str, default="INFO", choices=["INFO", "DEBUG"])
@@ -65,7 +65,6 @@ def main():
     app = create_app(config)
 
     if not args.dev:
-        
         ui_dir = Path(args.static_files)
         app.mount("/assets", StaticFiles(directory=ui_dir / "assets"), name="assets")
 
