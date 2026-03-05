@@ -131,7 +131,7 @@ requires-dist = [
     { name = "aiortc", specifier = ">=1.14.0" },
     { name = "email-validator", specifier = ">=2.3.0" },
     { name = "fastapi", specifier = ">=0.128.0" },
-    { name = "one-liner", git = "ssh://git@github.com/AllenNeuralDynamics/one-liner.git?branch=main" },
+    { name = "one-liner", git = "https://github.com/AllenNeuralDynamics/one-liner.git?branch=main" },
     { name = "tornado", specifier = ">=6.5.4" },
     { name = "uvicorn", specifier = ">=0.40.0" },
     { name = "zmq", specifier = ">=0.0.0" },
@@ -362,7 +362,7 @@ wheels = [
 [[package]]
 name = "one-liner"
 version = "0.1.1.dev2"
-source = { git = "ssh://git@github.com/AllenNeuralDynamics/one-liner.git?branch=main#22aa37370c3678726ebacb2f0a2e8ae263a94704" }
+source = { git = "https://github.com/AllenNeuralDynamics/one-liner.git?branch=main#22aa37370c3678726ebacb2f0a2e8ae263a94704" }
 dependencies = [
     { name = "orjson" },
     { name = "pydantic" },
