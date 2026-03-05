@@ -1,6 +1,6 @@
 from typing import Literal
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, EmailStr
 
 Protocol = Literal["tcp", "inproc", "ipc", "ws", "wss"]
 
@@ -19,3 +19,4 @@ class BrainslosherWebUiConfig(BaseModel):
     data_channels: list[str] = Field(default_factory=list)
     gets: dict[str, str] = Field(default_factory=dict)
     posts: dict[str, str] = Field(default_factory=dict)
+    suggested_emails: list[EmailStr] = Field(default=[]),

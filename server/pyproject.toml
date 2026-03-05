@@ -15,6 +15,7 @@ dependencies = [
     "tornado>=6.5.4",
     "uvicorn>=0.40.0",
     "zmq>=0.0.0",
+    "email-validator>=2.3.0",
 ]
 
 [project.scripts]

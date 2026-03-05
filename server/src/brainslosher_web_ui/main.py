@@ -61,7 +61,7 @@ def main():
 
     with open(args.config) as f:
         config: BrainslosherWebUiConfig = BrainslosherWebUiConfig(**json.load(f))
-
+        
     app = create_app(config)
 
     if not args.dev:
