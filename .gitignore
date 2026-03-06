@@ -1,3 +1,9 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*.pyc
+*$py.class
+
 # Logs
 logs
 *.log
@@ -8,9 +14,9 @@ pnpm-debug.log*
 lerna-debug.log*
 
 node_modules
+*.local
 dist
 dist-ssr
-*.local
 
 # Editor directories and files
 .vscode/*
@@ -22,3 +28,5 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+*.egg-info
+

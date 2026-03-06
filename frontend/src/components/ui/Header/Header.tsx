@@ -9,7 +9,7 @@ export const Header = () => {
   const instConfig = useInstrumentConfigStore((state) => state.config);
   const [userEmail, setUserEmail] = useState<string>("");
   const uiConfig = useAppConfigStore((state) => state.config);
-  const [emailSuggestions, setEmailSuggestions] = useState<Array<string>>([])
+  const [emailSuggestions, setEmailSuggestions] = useState<Array<string>>([]);
 
   useEffect(() => {
     if (!instConfig?.user_email) return;
@@ -21,7 +21,6 @@ export const Header = () => {
     setEmailSuggestions(uiConfig.suggested_emails);
   }, [uiConfig]);
 
-
   return (
     <Container
       fluid
@@ -29,7 +28,7 @@ export const Header = () => {
       className="flex justify-between p-2 mb-[1rem]"
     >
       <Title order={1} style={{ fontWeight: 700 }}>
-        Brain Slosher
+        {instConfig?.instrument_name ?? "BrainSlosher"}
       </Title>
       <Group ml="auto" gap="md">
         <Autocomplete

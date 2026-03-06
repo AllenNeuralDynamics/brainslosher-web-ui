@@ -28,7 +28,7 @@ function calculateSolution({
   protocol,
   instConfig,
 }: CalculateProps): Record<string, number> {
-  let totalSolutions: Record<string, number> = {};
+  const totalSolutions: Record<string, number> = {};
   for (const cycle of protocol) {
     if (!(cycle.solution in totalSolutions)) {
       totalSolutions[cycle.solution] = 0;
