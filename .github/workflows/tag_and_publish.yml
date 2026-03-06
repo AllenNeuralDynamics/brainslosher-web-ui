@@ -49,6 +49,7 @@ jobs:
           tag_name: v${{ steps.get_version.outputs.version }}
           name: v${{ steps.get_version.outputs.version }}
           prerelease: ${{ github.ref == 'refs/heads/dev' }}
-          files: dist/*.whl
+          files: server/dist/*.whl
         env:
+
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
