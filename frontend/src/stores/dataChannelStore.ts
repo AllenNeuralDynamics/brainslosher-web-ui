@@ -1,9 +1,9 @@
 import { create } from "zustand";
 
-interface DataChannelState {
+type DataChannelState = {
   channels: Record<string, RTCDataChannel>;
   addChannel: (id: string, channel: RTCDataChannel) => void;
-}
+};
 
 export const useDataChannelStore = create<DataChannelState>((set) => ({
   channels: {},

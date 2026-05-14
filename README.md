@@ -15,10 +15,11 @@ React Web app built to control the brainslosher instrument.
 - Python 3.12
 
 ### Setup
+---
 
-1. **Install backend dependencies:**
+1. **Install server dependencies:**
 ```bash
-cd backend
+cd server
 uv sync
 ```
 
@@ -38,28 +39,44 @@ yarn install
 uv run bin/brainslosher_main.py --config path_to_config 
 ```
 
-2. Launch FastAPI app backend with uvicorn in separate process. Web app will be hosted on 8000 so specify 8000
-
+2. Launch FastAPI server. Pass `--dev` to enable development mode which requires running the Vite dev server separately. Without `--dev` the app will serve the static frontend files from input path. To build static files at src/brainslosher_web_ui/dist, run `npm run build` in frontend folder.
 ```bash
-uv run uvicorn backend.main:app --host 0.0.0.0 --port 8000 --reload
+uv run src/main.py --config path_to_config [--dev] [--log_level INFO|DEBUG] [--static_files src/brainslosher_web_ui/dist]
 ```
 
-3. Start web ui
-
+3. **Dev mode only** — start the Vite dev server in a separate terminal:
 ```bash
 cd frontend
 npm run dev
 ```
 
+In dev mode the frontend is served by Vite on `http://localhost:5173` and API calls are proxied to the FastAPI server. In production mode the frontend is served directly by FastAPI. The server port is configured in the config file and defaults to `8000`.
+
 # Project Structure
+---
+
+```plaintext
+brainslosher-web-ui/ (feat-details)
+├── server/
+    └── src/
+        └── brainslosher-web-ui/
+            └── main.py/
+
+└── frontend/
+    └── features/
+        ├── instrumentControl/
+        ├── progress/
+        └── protocol/
+```
 
 ## Backend
+---
 
 The backend is expected to be the Brainslosher instrument 
 
 ## Backend -> Frontend link
 
-Communication from the backend to frontend is expected to be done through the one-liner package. On the instrument side, this will be facilitated by the server found in [brainwasher/bin/brainslosher_main.py](https://github.com/AllenNeuralDynamics/brainwasher/blob/feat-email-errors/bin/brainslosher_main.py). On the ui side, there is a fastApi layer found in [brainslosher-web-ui/backend/main.py](https://github.com/AllenNeuralDynamics/brainslosher-web-ui/blob/feat-details/backend/main.py). This also sets up a one-liner client and propogates messages to and from the instrument. The communication pattern is outlined below. 
+Communication from the backend to frontend is expected to be done through the one-liner package. On the instrument side, this will be facilitated by the server found in [brainwasher/src/scripts/brainslosher_main.py](https://github.com/AllenNeuralDynamics/brainwasher/blob/feat-email-errors/bin/brainslosher_main.py). On the ui side, there is a fastApi layer found in [brainslosher-web-ui/server/src/server/main.py]. This also sets up a one-liner client and propogates messages to and from the instrument. The communication pattern is outlined below. 
 
 ```bash
  __________________________python___________________________                          ____typescript_____
@@ -70,6 +87,7 @@ Communication from the backend to frontend is expected to be done through the on
 ```
 
 ## Frontend: 
+---
 
 The UI is split into three main components: protocol, progress and instrument control. 
 
@@ -81,6 +99,7 @@ If the instrument is running or paused, the protocol will be disabled.
 <img src="docs\images\protocol_panel.png" height="400">
 
 ### Progress: 
+---
 
 The progress section will update while the machine is running. Progress is expected to be propogated from the instrument. The progress pannel will mirror the steps configured in the protocol panel. It will also inform start, expected end, duration, and remaining times. 
 
@@ -88,6 +107,7 @@ The progress section will update while the machine is running. Progress is expec
 
 
 ### Control: 
+---
 
 The control section has functionality to fill, drain, empty waste, start, stop, pause, restart, and clear the instrument.
 

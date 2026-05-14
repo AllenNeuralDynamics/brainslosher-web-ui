@@ -1,6 +1,6 @@
 import { Modal, Text, Button } from "@mantine/core";
 import { useProtocolStore } from "@/stores/protocolStore.ts";
-import type { Protocol } from "../../protocol/types/protocolType";
+import type { Protocol } from "@/types/protocolType";
 import { useInstrumentConfigStore } from "@/stores/instrumentConfigStore.ts";
 import type { InstrumentConfig } from "@/types/configTypes.tsx";
 
@@ -28,7 +28,7 @@ function calculateSolution({
   protocol,
   instConfig,
 }: CalculateProps): Record<string, number> {
-  let totalSolutions: Record<string, number> = {};
+  const totalSolutions: Record<string, number> = {};
   for (const cycle of protocol) {
     if (!(cycle.solution in totalSolutions)) {
       totalSolutions[cycle.solution] = 0;

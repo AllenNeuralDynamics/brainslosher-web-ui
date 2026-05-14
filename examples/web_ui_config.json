@@ -1,8 +1,16 @@
 {
+  "router_client_kwargs": {
+    "interface":"localhost",
+    "rpc_port":"5555",
+    "broadcast_port": "5556"
+  },
+  "port":8000,
   "job_folder": "../../brain_slosher_jobs/",
-  "data_channels": ["state", "progress", "check_worker_status"],
+  "suggested_emails": ["micah.woodard@alleninstitute.org"],
+  "data_channels": ["state", "progress", "check_job_status"],
     "gets": {
-      "/instrument_config":"get_config"
+      "/instrument_config":"get_config",
+      "/get_job": "get_job"
     },
   "posts": {
     "/waste_emptied":"empty_waste",
@@ -16,7 +24,8 @@
     "/stop_run":"stop",
     "/clear_run":"clear",
     "/save_job":"save_job",
-    "/set_email":"set_email"
+    "/set_email":"set_email",
+    "/set_job": "set_job"
 
   }
 }

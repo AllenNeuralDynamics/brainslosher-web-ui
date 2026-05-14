@@ -1,10 +1,11 @@
-export interface AppConfig {
+export type AppConfig = {
   data_channels: string[];
+  suggested_emails: string[];
   gets: Record<string, string>;
   posts: Record<string, string>;
-}
+};
 
-export interface InstrumentConfig {
+export type InstrumentConfig = {
   selector_port_map: Record<string, number>;
   max_syringe_volume_ml: number;
   prime_volume_ml: number;
@@ -12,4 +13,5 @@ export interface InstrumentConfig {
   drain_volume_buffer_ml: number;
   fill_volume_ml: number;
   user_email: string | null;
-}
+  instrument_name: string | null;
+};

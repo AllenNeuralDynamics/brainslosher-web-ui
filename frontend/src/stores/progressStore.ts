@@ -1,10 +1,10 @@
 import { create } from "zustand";
 import { useDataChannelStore } from "./dataChannelStore";
 
-interface ProgressState {
-  progress: number | null;
+type ProgressState = {
+  progress: number;
   setProgress: (progress: number) => void;
-}
+};
 
 export const useProgressStore = create<ProgressState>((set) => {
   let currentListener: ((evt: MessageEvent) => void) | null = null;
@@ -44,7 +44,7 @@ export const useProgressStore = create<ProgressState>((set) => {
   });
 
   return {
-    progress: null,
+    progress: 0,
     setProgress: (progress) => set({ progress }),
   };
 });

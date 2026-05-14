@@ -6,11 +6,11 @@ import { useDataChannelStore } from "@/stores/dataChannelStore.ts";
 import { negotiate } from "@/utils/webRtcConnection.tsx";
 import { MainErrorFallback } from "@/components/errors/main";
 import { queryConfig } from "@/lib/react-query";
-import { api } from "../lib/client.tsx";
+import { api } from "@/lib/client.tsx";
 import { useThemeStore } from "@/stores/themeStore";
 import { useAppConfigStore } from "@/stores/appConfigStore.ts";
 import { useInstrumentConfigStore } from "@/stores/instrumentConfigStore.ts";
-import { UseRunErrorHandling } from "@/hooks/useRunErrorHandling.ts";
+import { useProtocolStore } from "@/stores/protocolStore.ts";
 
 type AppProviderProps = {
   children: React.ReactNode;
@@ -21,6 +21,7 @@ export const AppProvider = ({ children }: AppProviderProps) => {
   const setUiConfig = useAppConfigStore((state) => state.setConfig);
   const uiConfig = useAppConfigStore((state) => state.config);
   const setInstConfig = useInstrumentConfigStore((state) => state.setConfig);
+  const setProtocol = useProtocolStore((state) => state.setProtocol);
 
   const [queryClient] = useState(
     () =>
@@ -33,14 +34,29 @@ export const AppProvider = ({ children }: AppProviderProps) => {
   useEffect(() => {
     async function fetchUiConfig() {
       try {
-        const uiConfig = await api.get("/ui_config");
-        setUiConfig({ ...uiConfig.data });
+        const config = await api.get("/ui_config");
+        setUiConfig({ ...config.data });
       } catch (error) {
         console.error("Error fetching config:", error);
       }
     }
     fetchUiConfig();
-  }, [setUiConfig]);
+  }, []);
+
+  // fetch job
+  useEffect(() => {
+    async function fetchjob() {
+      try {
+        const job = await api.get("/get_job");
+        if (job.data) {
+          setProtocol({ ...job.data });
+        }
+      } catch (error) {
+        console.error("Error fetching protocol:", error);
+      }
+    }
+    fetchjob();
+  }, [setProtocol]);
 
   // populate dataChannels
   useEffect(() => {
@@ -58,8 +74,6 @@ export const AppProvider = ({ children }: AppProviderProps) => {
       pc.close();
     };
   }, [uiConfig, addChannel]);
-
-  UseRunErrorHandling();
 
   //  grab instrument config
   useEffect(() => {

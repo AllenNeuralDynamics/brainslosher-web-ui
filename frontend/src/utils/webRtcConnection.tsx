@@ -1,3 +1,5 @@
+import { api } from "@/lib/client.tsx";
+
 /**
  * negotiate function for establishing sdp and ice with webRTC peer connections
  *
@@ -32,16 +34,10 @@ export async function negotiate(pc: RTCPeerConnection) {
     throw new Error("PeerConnection localDescription is not set yet");
   }
 
-  const response = await fetch(`http://localhost:8000/offer`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      sdp: localDescription.sdp,
-      type: localDescription.type,
-    }),
+  const response = await api.post("/offer", {
+    sdp: localDescription.sdp,
+    type: localDescription.type,
   });
 
-  // recieve sdp answer from server
-  const answer = await response.json();
-  await pc.setRemoteDescription(answer);
+  await pc.setRemoteDescription(response.data);
 }
