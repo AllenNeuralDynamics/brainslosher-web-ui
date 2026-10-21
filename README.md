@@ -6,7 +6,7 @@
 <img src="docs\images\full_page.png" height="400">
 
 
-React Web app built to control the brainslosher instrument. Still in review and development.
+React Web app built to control the brainslosher instrument. 
 
 ### Prerequisites
 
@@ -32,9 +32,9 @@ yarn install
 ```
 
 ### Launch
----
 
 1. Start brainslosher in separate process. This can be found in [brainwasher/bin/brainslosher_main.py](https://github.com/AllenNeuralDynamics/brainwasher/blob/feat-email-errors/bin/brainslosher_main.py)
+
 ```bash
 uv run bin/brainslosher_main.py --config path_to_config 
 ```
